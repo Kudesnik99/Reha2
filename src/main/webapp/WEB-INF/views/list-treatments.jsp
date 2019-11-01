@@ -24,8 +24,12 @@
     <div class="row">
         <jsp:include page="parts/left-bar.jsp"/>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header"><spring:message code="treatment.list_form_title"/></h1>
-            <h2 class="sub-header"><spring:message code="treatment.doctor"/>: ${fn:trim(userDto.lastName)} ${fn:trim(userDto.firstName)}</h2>
+            <h1 class="page-header"><spring:message code="treatment.doctor"/>: ${fn:trim(userDto.lastName)} ${fn:trim(userDto.firstName)}</h1>
+            <h2 class="sub-header">
+                <spring:message code="treatment.list_form_title"/>:
+                <c:if test="${patientId gt 0}">${patient.lastName}</c:if>
+                <c:if test="${patientId eq 0}">All patients</c:if>
+            </h2>
 
             <input type="button" value="<spring:message code="treatment.add_button"/>"
                    onclick="window.location.href='showForm?patientId=${param.patientId}'; return false;"
@@ -56,6 +60,7 @@
 
                         <c:url var="generateLink" value="/treatment/generate">
                             <c:param name="treatmentId" value="${tempTreatment.treatmentId}" />
+                            <c:param name="patientId" value="${tempTreatment.patient.patientId}" />
                         </c:url>
 
                         <tr>

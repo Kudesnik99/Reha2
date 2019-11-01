@@ -9,6 +9,7 @@ import ru.tsystems.reha.entity.Treatment;
 import ru.tsystems.reha.entity.User;
 
 import javax.persistence.PersistenceException;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -49,8 +50,8 @@ public class TreatmentDaoImpl extends GenericDaoImpl<Treatment> implements Treat
         //Session session = sessionFactory.getCurrentSession();
         //Session session = sessionFactory.getCurrentSession();
         Session session = sessionFactory.getCurrentSession();
-        Query query = session.getNamedQuery("Treatment.findByPatient");
-        query.setParameter("patientID", theId);
+        TypedQuery<Treatment> query = session.createNamedQuery("Treatment.findByPatient", Treatment.class);
+        query.setParameter("patientId", theId);
         List<Treatment> result = query.getResultList(); //list();
         if (result.size() < 1) return null;
         else return result; //query.getResultList().get(0);

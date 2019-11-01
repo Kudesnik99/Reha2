@@ -10,6 +10,7 @@ import ru.tsystems.reha.dao.PatientDao;
 import ru.tsystems.reha.dao.UserDao;
 import ru.tsystems.reha.entity.Event;
 import ru.tsystems.reha.entity.Patient;
+import ru.tsystems.reha.entity.Pattern;
 
 import java.util.List;
 
@@ -26,6 +27,17 @@ public class EventServiceImpl implements EventService {
     public List<Event> getEvents() throws ServiceException {
         try {
             return eventDao.findAll();
+        } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ErrorService.PERSIST_EXCEPTION, e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void saveEvents(Event event) throws ServiceException {
+        try {
+            eventDao.saveOrUpdate(event);
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ErrorService.PERSIST_EXCEPTION, e);

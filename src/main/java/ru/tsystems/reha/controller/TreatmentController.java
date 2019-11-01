@@ -15,10 +15,7 @@ import ru.tsystems.reha.entity.Remedy;
 import ru.tsystems.reha.entity.Treatment;
 import ru.tsystems.reha.model.TreatmentForm;
 import ru.tsystems.reha.model.TreatmentFormConverter;
-import ru.tsystems.reha.service.PatternService;
-import ru.tsystems.reha.service.RemedyService;
-import ru.tsystems.reha.service.ServiceException;
-import ru.tsystems.reha.service.TreatmentService;
+import ru.tsystems.reha.service.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,18 +35,25 @@ public class TreatmentController {
     @Autowired
     private PatternService patternService;
 
+    @Autowired
+    private PatientService patientService;
+
     @GetMapping("/list")
-    public String listTreatments(@RequestParam("patientId") int theId, Model model, Authentication authentication) {
+    public String listTreatments(@RequestParam("patientId") int patientId, Model model, Authentication authentication) {
         try {
-            if (theId > 0) {
-                List<Treatment> treatments = treatmentService.getTreatments();
-                //List<Treatment> treatments = treatmentService.getTreatmentsByPatientId(theId);
+            if (patientId > 0) {
+                //List<Treatment> treatments = treatmentService.getTreatments();
+                List<Treatment> treatments = treatmentService.getTreatmentsByPatientId(patientId);
+                Patient patient = patientService.getPatient(patientId);
                 model.addAttribute("treatments", treatments);
                 model.addAttribute("userDto", authentication.getPrincipal());
+                model.addAttribute("patient", patient);
+                model.addAttribute("patientId", patientId);
             } else {
                 List<Treatment> treatments = treatmentService.getTreatments();
                 model.addAttribute("treatments", treatments);
                 model.addAttribute("userDto", authentication.getPrincipal()); //userDto);
+                model.addAttribute("patientId", patientId);
             }
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
@@ -63,25 +67,22 @@ public class TreatmentController {
 
     @GetMapping("/showForm")
     public String showFormForSave(@RequestParam("patientId") int theId,
-                                  Model theModel) {
+                                  Model model) {
         try {
             TreatmentForm treatmentForm = new TreatmentForm();
-            treatmentForm.setPatientId(theId);
             treatmentForm.setPatient(treatmentService.getPatientByPatientId(theId));
-            List<Remedy> remedies = remedyService.getRemedies();
-            List<Pattern> patterns = patternService.getPatterns();
-            theModel.addAttribute("treatmentForm", treatmentForm);
-            theModel.addAttribute("remedies", remedies);
-            theModel.addAttribute("patterns", patterns);
+            treatmentForm.setPatientId(treatmentForm.getPatient().getPatientId());
+            model.addAttribute("treatmentForm", treatmentForm);
+            initReferenceBooks(model);
 //            Treatment treatment = TreatmentFormConverter.toTreatment(treatmentForm);
 //            Treatment theTreatment = new Treatment();
 //            theTreatment.setPatient(treatmentService.getPatientByPatientId(theId));
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
-            theModel.addAttribute("exception", e.getError().getMessage());
+            model.addAttribute("exception", e.getError().getMessage());
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
-            theModel.addAttribute("exception", e.getMessage());
+            model.addAttribute("exception", e.getMessage());
         }
         return "treatment-form";
     }
@@ -104,8 +105,10 @@ public class TreatmentController {
     public String showFormForUpdate(@RequestParam("treatmentId") int theId,
                                     Model model) {
         try {
-            Treatment theTreatment = treatmentService.getTreatment(theId);
-            model.addAttribute("treatment", theTreatment);
+            Treatment treatment = treatmentService.getTreatment(theId);
+            TreatmentForm treatmentForm = TreatmentFormConverter.toTreatmentForm(treatment);
+            model.addAttribute("treatmentForm", treatmentForm);
+            initReferenceBooks(model);
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
         } catch (Exception e) {
@@ -121,15 +124,15 @@ public class TreatmentController {
     }
 
     @GetMapping("/generate")
-    public String generateEvents(@RequestParam("treatmentId") int theId) {
+    public String generateEvents(@RequestParam("treatmentId") int treatmentId, @RequestParam("patientId") int patientId) {
         try {
-            treatmentService.generateEvents(theId);
+            treatmentService.generateEvents(treatmentId);
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        return "redirect:/treatment/list";
+        return "redirect:/treatment/list?patientId=" + patientId;
     }
 
     @InitBinder
@@ -139,5 +142,16 @@ public class TreatmentController {
 
         // true passed to CustomDateEditor constructor means convert empty String to null
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
+    }
+
+    private void initReferenceBooks(Model model) {
+        try {
+            List<Remedy> remedies = remedyService.getRemedies();
+            List<Pattern> patterns = patternService.getPatterns();
+            model.addAttribute("remedies", remedies);
+            model.addAttribute("patterns", patterns);
+        } catch (ServiceException e) {
+            LOG.warn(e.getError().getMessageForLog(), e);
+        }
     }
 }

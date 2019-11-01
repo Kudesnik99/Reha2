@@ -18,6 +18,8 @@ import ru.tsystems.reha.model.PatientFormConverter;
 import ru.tsystems.reha.model.TreatmentForm;
 import ru.tsystems.reha.model.TreatmentFormConverter;
 
+import java.lang.reflect.InvocationTargetException;
+import java.security.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -94,6 +96,7 @@ public class TreatmentServiceImpl implements TreatmentService {
         }
     }
 
+    @Transactional
     @Override
     public List<Treatment> getTreatmentsByPatientId(int theId) throws ServiceException {
         try {
@@ -105,6 +108,7 @@ public class TreatmentServiceImpl implements TreatmentService {
         }
     }
 
+    @Transactional
     @Override
     public List<Event> generateEvents(int id) throws ServiceException {
         try {
@@ -112,11 +116,14 @@ public class TreatmentServiceImpl implements TreatmentService {
             int patternId = treatment.getTimePattern().getPatternId();
             Pattern pattern = patternDao.findById(patternId);
             CronSequenceGenerator generator = new CronSequenceGenerator(pattern.getPatternTemplate());
-            Date eventDate;
+            Date eventDate = treatment.getPeriod_start();
+            Event event;
             do {
-                eventDate = generator.next(treatment.getPeriod_start());
-                //if (eventDate.after(treatment.getPeriod_start())) break;
-            } while (eventDate != null && (eventDate.before(treatment.getPeriod_start())));
+                eventDate = generator.next(eventDate);
+                //ToDo: create Event
+
+
+            } while (eventDate != null && (eventDate.before(treatment.getPeriod_end())));
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ErrorService.PERSIST_EXCEPTION, e);

@@ -7,4 +7,6 @@ import java.util.List;
 public interface EventService {
 
     public List<Event> getEvents() throws ServiceException;
+
+    public void saveEvents(Event event) throws ServiceException;
 }
