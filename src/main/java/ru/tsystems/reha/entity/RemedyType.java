@@ -2,7 +2,7 @@ package ru.tsystems.reha.entity;
 
 public enum RemedyType {
 
-    DRUG("Medicine"), PROCEDURE("Procedure"), SPECIAL("Гncountable");
+    DRUG("Medicine"), PROCEDURE("Procedure"), SPECIAL("Uncountable");
 
     private final String typeName;
 
@@ -10,7 +10,7 @@ public enum RemedyType {
         this.typeName = typeName;
     }
 
-    public String gerTypeName() {
+    public String getTypeName() {
         return typeName;
     }
 

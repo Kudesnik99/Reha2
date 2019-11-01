@@ -5,24 +5,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.reha.dao.DaoException;
-import ru.tsystems.reha.dao.UserDao;
-import ru.tsystems.reha.entity.User;
+import ru.tsystems.reha.dao.RemedyDao;
+import ru.tsystems.reha.entity.Remedy;
 
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class RemedyServiceImpl implements RemedyService {
 
-    private static final Logger LOG = Logger.getLogger(UserServiceImpl.class);
+    private static final Logger LOG = Logger.getLogger(RemedyServiceImpl.class);
 
     @Autowired
-    private UserDao userDao;
+    private RemedyDao remedyDao;
 
     @Override
     @Transactional
-    public List<User> getUsers() throws ServiceException {
+    public List<Remedy> getRemedies() throws ServiceException {
         try {
-            return userDao.findAll();
+            return remedyDao.findAll();
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ErrorService.PERSIST_EXCEPTION, e);
@@ -31,9 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveUser(User theUser) throws ServiceException {
+    public void saveRemedy(Remedy theRemedy) throws ServiceException {
         try {
-            userDao.saveOrUpdate(theUser);
+            remedyDao.saveOrUpdate(theRemedy);
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ErrorService.PERSIST_EXCEPTION, e);
@@ -42,9 +42,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User getUser(int theId) throws ServiceException {
+    public Remedy getRemedy(int theId) throws ServiceException {
         try {
-            return userDao.findById(theId);
+            return remedyDao.findById(theId);
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ErrorService.PERSIST_EXCEPTION, e);
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUser(int theId) {
+    public void deleteRemedy(int theId) {
 
     }
 }

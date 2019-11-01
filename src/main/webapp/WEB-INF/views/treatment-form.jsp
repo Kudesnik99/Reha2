@@ -7,8 +7,7 @@
 --%>
 
 
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-         pageEncoding="windows-1251"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="windows-1251"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
@@ -19,8 +18,8 @@
     <meta charset="UTF-8">
     <title><spring:message code="treatment.edit_form_title"/></title>
     <link href="<c:url value="/resources/css/bootstrap.min.css" />" rel="stylesheet">
-    <script src="<c:url value="/resources/js/jquery-3.4.1.slim.min.js" />"></script>
-    <%@ include file="datapicker.jsp" %>
+    <link href="<c:url value="/resources/plugins/select/css/select2.css" />" rel="stylesheet">
+
 </head>
 <body>
 <div class="container">
@@ -39,16 +38,50 @@
                     <form:hidden path="patientId" />
 
                     <div class="form-group">
-                        <label class="col-md-3 control-label">Patient:</label>
+                        <label class="col-md-3 control-label"><spring:message code="treatment.patient"/></label>
                         <div class="col-md-9">
                             <label class="form-control">${fn:trim(treatmentForm.patient.lastName)}</label>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="timePattern" class="col-md-3 control-label"><spring:message code="treatment.time_pattern"/></label>
+                    <%--div class="form-group">
+                        <label class="col-md-3 control-label"><spring:message code="treatment.remedy"/></label>
                         <div class="col-md-9">
-                            <form:input path="timePattern" cssClass="form-control" />
+                            <label class="form-control">${fn:trim(treatmentForm.remedy.name)}</label>
+                        </div>
+                    </div--%>
+
+                    <div class="form-group">
+                        <label for="remedy.remedyId" class="col-md-3 control-label"><spring:message code="treatment.remedy"/></label>
+                        <div class="col-md-9">
+                            <%--<form:select  path="remedy" cssClass="form-control">
+                                 <form:options items="${remedies}" itemLabel="name"/>
+                            </form:select>--%>
+
+                            <%--<select class="form-control" name="remedyId" id="remedyId">
+                                <c:forEach var="item" items="${remedies}" >
+                                    <option value="${item.remedyId}">${item.name}</option>
+                                </c:forEach>
+                            </select>--%>
+
+                                <form:select path="remedy.remedyId" cssClass="form-control">
+                                    <c:forEach var='item' items='${remedies}' >
+                                        <form:option value="${item.remedyId}" label="${item.name}" />
+                                    </c:forEach>
+                                </form:select>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timePattern.patternId" class="col-md-3 control-label"><spring:message code="treatment.time_pattern"/></label>
+                        <div class="col-md-9">
+                            <form:select path="timePattern.patternId" cssClass="form-control">
+                                <c:forEach var='item' items='${patterns}' >
+                                    <form:option value="${item.patternId}" label="${item.timePattern}" />
+                                </c:forEach>
+                            </form:select>
+                            <%--<form:input path="timePattern" cssClass="form-control" />--%>
                         </div>
                     </div>
                     <div class="form-group">
@@ -104,10 +137,12 @@
         </div>
     </div>
 </div>
-  <script>
-    $.fn.datepicker.defaults.format = "dd-mm-yyyy";
-    $('.datepicker').datepicker();
-  </script>
+   <script src="<c:url value="/resources/js/jquery-3.4.1.slim.min.js" />"></script>
+   <script src="<c:url value="/resources/js/jquery.min.js" />"></script>
+   <script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
+   <script src="<c:url value="/resources/plugins/select/js/select2.min.js" />"></script>
+   <%@ include file="datapicker.jsp" %>
+   <script src="<c:url value="/resources/js/treatment-form.js" />"></script>
 </body>
 </html>
 

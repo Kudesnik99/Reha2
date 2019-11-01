@@ -1,5 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8"
-         pageEncoding="windows-1251" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="windows-1251" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -15,7 +14,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">${userDto.role.gerRoleName()}: ${fn:trim(userDto.lastName)} ${fn:trim(userDto.firstName)}</a>
+                <a class="navbar-brand" href="#">${userDto.role.getRoleName()}: ${fn:trim(userDto.lastName)} ${fn:trim(userDto.firstName)}</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">

@@ -29,7 +29,7 @@ public class Remedy {
     }
 
     @Column(name = "type")
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     public RemedyType getType() { return type; }
     public void setType(RemedyType type) { this.type = type; }
 

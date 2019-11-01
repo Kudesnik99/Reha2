@@ -31,16 +31,16 @@ public class Treatment {
 
     //---------------------------------------------------------
     //    @Basic
-    @Column(name = "time_pattern")
-    private String timePattern;
-
-    public String getTimePattern() {
-        return timePattern;
-    }
-
-    public void setTimePattern(String timePattern) {
-        this.timePattern = timePattern;
-    }
+//    @Column(name = "time_pattern")
+//    private String timePattern;
+//
+//    public String getTimePattern() {
+//        return timePattern;
+//    }
+//
+//    public void setTimePattern(String timePattern) {
+//        this.timePattern = timePattern;
+//    }
 
     //---------------------------------------------------------
     //    @Basic
@@ -128,6 +128,19 @@ public class Treatment {
     public Patient getPatient() { return patient; }
     public void setPatient(Patient patient) { this.patient = patient; }
 
+    @ManyToOne
+    @JoinColumn(name = "remedy_id", referencedColumnName = "remedy_id", nullable = false)
+    private Remedy remedy;
+    public Remedy getRemedy() { return remedy; }
+    public void setRemedy(Remedy remedy) { this.remedy = remedy; }
+
+    @ManyToOne
+    @JoinColumn(name = "pattern_id", referencedColumnName = "pattern_id", nullable = false)
+    private Pattern timePattern;
+    public Pattern getTimePattern() { return timePattern; }
+    public void setTimePattern(Pattern timePattern) { this.timePattern = timePattern; }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -137,8 +150,6 @@ public class Treatment {
 
         if (treatmentId != treatment.treatmentId) return false;
         if (dose != treatment.dose) return false;
-        if (timePattern != null ? !timePattern.equals(treatment.timePattern) : treatment.timePattern != null)
-            return false;
         if (description != null ? !description.equals(treatment.description) : treatment.description != null)
             return false;
         if (period_start != null ? !period_start.equals(treatment.period_start) : treatment.period_start != null) return false;
@@ -153,7 +164,6 @@ public class Treatment {
     @Override
     public int hashCode() {
         int result = treatmentId;
-        result = 31 * result + (timePattern != null ? timePattern.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (period_start != null ? period_start.hashCode() : 0);
         result = 31 * result + (period_end != null ? period_end.hashCode() : 0);

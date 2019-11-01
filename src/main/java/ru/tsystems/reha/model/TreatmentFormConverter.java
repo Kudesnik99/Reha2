@@ -17,6 +17,7 @@ public class TreatmentFormConverter {
         result.setStatus(treatmentForm.getStatus());
         result.setTreatmentResult(treatmentForm.getTreatmentResult());
         result.setPatient(treatmentForm.getPatient());
+        result.setRemedy(treatmentForm.getRemedy());
         return result;
     }
 }

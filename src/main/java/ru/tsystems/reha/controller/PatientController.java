@@ -23,39 +23,32 @@ import java.util.List;
 @Controller
 @RequestMapping("/patient")
 public class PatientController {
-    private static final Logger LOG = Logger.getLogger(TreatmentController.class);
+    private static final Logger LOG = Logger.getLogger(PatientController.class);
 
     @Autowired
     private PatientService patientService;
 
-//    @Autowired
-//    private UserDetailsServiceImpl userDetailsService;
-//
-//    @Autowired
-//    private UserService userService;
-
-
     @GetMapping("/list")
-    public String listPatients(Model theModel, Authentication authentication) {
+    public String listPatients(Model model, Authentication authentication) {
         try {
             List<Patient> thePatients = patientService.getPatients();
-            theModel.addAttribute("patients", thePatients);
-            UserDto userDto = (UserDto) authentication.getPrincipal();
-            theModel.addAttribute("userDto", userDto);
+            model.addAttribute("patients", thePatients);
+            //UserDto userDto = (UserDto) authentication.getPrincipal();
+            model.addAttribute("userDto", authentication.getPrincipal()); //userDto);
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
-            theModel.addAttribute("exception", e.getError().getMessage());
+            model.addAttribute("exception", e.getError().getMessage());
         }
         return "list-patients";
     }
 
     @GetMapping("/addPatient")
-    public String showFormForAdd(Model theModel, Authentication authentication) {
-        Patient thePatient = new Patient();
-        theModel.addAttribute("patient", thePatient);
+    public String showFormForAdd(Model model, Authentication authentication) {
+        Patient patient = new Patient();
+        model.addAttribute("patient", patient);
 
         UserDto userDto = (UserDto) authentication.getPrincipal();
-        theModel.addAttribute("userDto", userDto);
+        model.addAttribute("userDto", userDto);
 //        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 //        theModel.addAttribute("userDetails", userDetails);
         return "patient-form";

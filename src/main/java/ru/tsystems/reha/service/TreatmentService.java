@@ -1,5 +1,6 @@
 package ru.tsystems.reha.service;
 
+import ru.tsystems.reha.entity.Event;
 import ru.tsystems.reha.entity.Patient;
 import ru.tsystems.reha.entity.Treatment;
 import ru.tsystems.reha.model.TreatmentForm;
@@ -12,12 +13,14 @@ public interface TreatmentService {
 
     public void saveTreatment(TreatmentForm theTreatment) throws ServiceException;
 
-    public Treatment getTreatment(int theId);
+    public Treatment getTreatment(int theId) throws ServiceException;
 
     public void deleteTreatment(int theId);
 
     public Patient getPatientByPatientId(int theId) throws ServiceException;
 
     public List<Treatment> getTreatmentsByPatientId(int theId) throws ServiceException;
+
+    public List<Event> generateEvents (int theId) throws ServiceException;
 
 }
