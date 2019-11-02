@@ -46,12 +46,10 @@ public class TreatmentDaoImpl extends GenericDaoImpl<Treatment> implements Treat
     }
 
     @Override
-    public List<Treatment> findByPatientId(int theId) {
-        //Session session = sessionFactory.getCurrentSession();
-        //Session session = sessionFactory.getCurrentSession();
+    public List<Treatment> findByPatientId(int patientId) {
         Session session = sessionFactory.getCurrentSession();
         TypedQuery<Treatment> query = session.createNamedQuery("Treatment.findByPatient", Treatment.class);
-        query.setParameter("patientId", theId);
+        query.setParameter("patientId", patientId);
         List<Treatment> result = query.getResultList(); //list();
         if (result.size() < 1) return null;
         else return result; //query.getResultList().get(0);

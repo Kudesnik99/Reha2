@@ -11,7 +11,7 @@
        <ul class="nav nav-sidebar">
            <li class="active"><a href="${pageContext.request.contextPath}/patient/list"><spring:message code="leftbar.patient.patient_list"/> <span class="sr-only">(current)</span></a></li>
            <li><a href="${pageContext.request.contextPath}/treatment/list?patientId=0"><spring:message code="leftbar.treatment.list"/></a></li>
-           <li><a href="${pageContext.request.contextPath}/event/list"><spring:message code="leftbar.event.list"/></a></li>
+           <li><a href="${pageContext.request.contextPath}/event/list?treatmentId=0"><spring:message code="leftbar.event.list"/></a></li>
        </ul>
        <ul class="nav nav-sidebar">
            <li><a href="${pageContext.request.contextPath}/remedy/list"><spring:message code="leftbar.patient.remedy_list"/></a></li>

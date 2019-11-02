@@ -41,12 +41,12 @@
                                 <c:forEach var="tempPattern" items="${pattern}">
 
                                     <!-- construct an "update" link with customer id -->
-                                    <c:url var="updateLink" value="/remedy/updateRemedy">
+                                    <c:url var="updateLink" value="/pattern/updateForm">
                                         <c:param name="patternId" value="${tempPattern.patternId}" />
                                     </c:url>
 
                                     <!-- construct an "delete" link with customer id -->
-                                    <c:url var="deleteLink" value="/remedy/delete">
+                                    <c:url var="deleteLink" value="/pattern/delete">
                                         <c:param name="patternId" value="${tempPattern.patternId}" />
                                     </c:url>
 

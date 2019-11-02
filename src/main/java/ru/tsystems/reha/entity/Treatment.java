@@ -10,7 +10,7 @@ import java.util.Date;
         @NamedQuery(name = "Treatment.findByPatient", query = "select tr from Treatment tr " +
                 "where tr.patient.patientId = :patientId")})
 public class Treatment {
-    public Treatment(){};
+    public Treatment(){}
 
     //private Patient patientByPatientId;
     //private Remedy remedyByRemedyId;
@@ -20,11 +20,9 @@ public class Treatment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "treatment_id")
     private int treatmentId;
-
     public int getTreatmentId() {
         return treatmentId;
     }
-
     public void setTreatmentId(int treatmentId) {
         this.treatmentId = treatmentId;
     }
@@ -43,61 +41,48 @@ public class Treatment {
 //    }
 
     //---------------------------------------------------------
-    //    @Basic
     @Column(name = "description")
     private String description;
-
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
 
     //---------------------------------------------------------
-    //    @Basic
     @Column(name = "period_start")
     private Date period_start;
-
     public Date getPeriod_start() {
         return period_start;
     }
-
     public void setPeriod_start(Date period_start) {
         this.period_start = period_start;
     }
 
     //---------------------------------------------------------
-    //    @Basic
     @Column(name = "period_end")
     private Date period_end;
-
     public Date getPeriod_end() {
         return period_end;
     }
-
     public void setPeriod_end(Date period_end) {
         this.period_end = period_end;
     }
 
     //---------------------------------------------------------
-    //    @Basic
     @Column(name = "dose")
     private int dose;
     public int getDose() {
         return dose;
     }
-
     public void setDose(int dose) {
         this.dose = dose;
     }
 
     //---------------------------------------------------------
-    //    @Basic
     @Column(name = "status")
     private String status;
-
     public String getStatus() {
         return status;
     }
@@ -107,20 +92,15 @@ public class Treatment {
     }
 
     //---------------------------------------------------------
-    //    @Basic
     @Column(name = "treatment_result")
     private String treatmentResult;
-
     public String getTreatmentResult() {
         return treatmentResult;
     }
-
     public void setTreatmentResult(String treatmentResult) {
         this.treatmentResult = treatmentResult;
     }
     //---------------------------------------------------------
-
-    //@Column(name = "patient_id")
 
     @ManyToOne
     @JoinColumn(name = "patient_id", referencedColumnName = "patient_id", nullable = false)

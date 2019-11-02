@@ -17,7 +17,11 @@
         <jsp:include page="parts/left-bar.jsp"/>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header"><spring:message code="event.list_form_title"/></h1>
-            <h2 class="sub-header">--------------------</h2>
+            <h2 class="sub-header">
+                <spring:message code="event.header2"/>:
+                    <c:if test="${treatmentId gt 0}">${patient.lastName}</c:if>
+                    <c:if test="${treatmentId eq 0}">All patients</c:if>
+            </h2>
 
             <%--input type="button" value="<spring:message code="patient.add_button"/>"
                    onclick="window.location.href='addPatient'; return false;"

@@ -41,20 +41,18 @@ public class TreatmentController {
     @GetMapping("/list")
     public String listTreatments(@RequestParam("patientId") int patientId, Model model, Authentication authentication) {
         try {
+            List<Treatment> treatments;
             if (patientId > 0) {
-                //List<Treatment> treatments = treatmentService.getTreatments();
-                List<Treatment> treatments = treatmentService.getTreatmentsByPatientId(patientId);
+                treatments = treatmentService.getTreatmentsByPatientId(patientId);
                 Patient patient = patientService.getPatient(patientId);
-                model.addAttribute("treatments", treatments);
-                model.addAttribute("userDto", authentication.getPrincipal());
                 model.addAttribute("patient", patient);
-                model.addAttribute("patientId", patientId);
+
             } else {
-                List<Treatment> treatments = treatmentService.getTreatments();
-                model.addAttribute("treatments", treatments);
-                model.addAttribute("userDto", authentication.getPrincipal()); //userDto);
-                model.addAttribute("patientId", patientId);
+                treatments = treatmentService.getTreatments();
             }
+            model.addAttribute("treatments", treatments);
+            model.addAttribute("userDto", authentication.getPrincipal());
+            model.addAttribute("patientId", patientId);
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
             model.addAttribute("exception", e.getError().getMessage());
@@ -74,9 +72,6 @@ public class TreatmentController {
             treatmentForm.setPatientId(treatmentForm.getPatient().getPatientId());
             model.addAttribute("treatmentForm", treatmentForm);
             initReferenceBooks(model);
-//            Treatment treatment = TreatmentFormConverter.toTreatment(treatmentForm);
-//            Treatment theTreatment = new Treatment();
-//            theTreatment.setPatient(treatmentService.getPatientByPatientId(theId));
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
             model.addAttribute("exception", e.getError().getMessage());
@@ -120,11 +115,11 @@ public class TreatmentController {
     @GetMapping("/delete")
     public String deleteTreatment(@RequestParam("treatmentId") int theId) {
         treatmentService.deleteTreatment(theId);
-        return "redirect:/treatment/list";
+        return "redirect:/treatment/list?treatmentId=0";
     }
 
     @GetMapping("/generate")
-    public String generateEvents(@RequestParam("treatmentId") int treatmentId, @RequestParam("patientId") int patientId) {
+    public String generateEvents(@RequestParam("treatmentId") int treatmentId) {
         try {
             treatmentService.generateEvents(treatmentId);
         } catch (ServiceException e) {
@@ -132,7 +127,7 @@ public class TreatmentController {
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
         }
-        return "redirect:/treatment/list?patientId=" + patientId;
+        return "redirect:/event/list?treatmentId=" + treatmentId;
     }
 
     @InitBinder

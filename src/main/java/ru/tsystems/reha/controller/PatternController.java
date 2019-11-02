@@ -62,13 +62,13 @@ public class PatternController {
     }
 
     @GetMapping("/delete")
-    public String deletePattern(@RequestParam("patternId") int theId) {
+    public String deletePattern(@RequestParam("patternId") int patternId) {
         try {
-            patternService.deletePattern(theId);
+            patternService.deletePattern(patternId);
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
         }
-        return "redirect:/patient/list";
+        return "redirect:/pattern/list";
     }
 
 }

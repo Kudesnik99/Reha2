@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.tsystems.reha.dao.DaoException;
-import ru.tsystems.reha.dao.PatientDao;
-import ru.tsystems.reha.dao.PatternDao;
-import ru.tsystems.reha.dao.TreatmentDao;
+import ru.tsystems.reha.dao.*;
 import ru.tsystems.reha.entity.Event;
 import ru.tsystems.reha.entity.Patient;
 import ru.tsystems.reha.entity.Pattern;
@@ -20,6 +17,7 @@ import ru.tsystems.reha.model.TreatmentFormConverter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.security.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +34,9 @@ public class TreatmentServiceImpl implements TreatmentService {
 
     @Autowired
     private PatternDao patternDao;
+
+    @Autowired
+    private EventDao eventDao;
 
     @Override
     @Transactional
@@ -98,10 +99,10 @@ public class TreatmentServiceImpl implements TreatmentService {
 
     @Transactional
     @Override
-    public List<Treatment> getTreatmentsByPatientId(int theId) throws ServiceException {
+    public List<Treatment> getTreatmentsByPatientId(int patientId) throws ServiceException {
         try {
             //return patientDao.findById(theId);
-            return treatmentDao.findByPatientId(theId);
+            return treatmentDao.findByPatientId(patientId);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ErrorService.PERSIST_EXCEPTION, e);
@@ -110,9 +111,11 @@ public class TreatmentServiceImpl implements TreatmentService {
 
     @Transactional
     @Override
-    public List<Event> generateEvents(int id) throws ServiceException {
+    public List<Event> generateEvents(int treatmentId) throws ServiceException {
         try {
-            Treatment treatment = treatmentDao.findById(id);
+
+            List<Event> result = new ArrayList<>();
+            Treatment treatment = treatmentDao.findById(treatmentId);
             int patternId = treatment.getTimePattern().getPatternId();
             Pattern pattern = patternDao.findById(patternId);
             CronSequenceGenerator generator = new CronSequenceGenerator(pattern.getPatternTemplate());
@@ -120,14 +123,17 @@ public class TreatmentServiceImpl implements TreatmentService {
             Event event;
             do {
                 eventDate = generator.next(eventDate);
-                //ToDo: create Event
-
-
+                event = new Event();
+                event.setDateTime(eventDate);
+                event.setTreatmentId(treatment);
+                event.setStatus("Planned");
+                eventDao.saveOrUpdate(event);
+                result.add(event);
             } while (eventDate != null && (eventDate.before(treatment.getPeriod_end())));
+            return result;
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ErrorService.PERSIST_EXCEPTION, e);
         }
-        return null;
     }
 }
