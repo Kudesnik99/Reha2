@@ -3,12 +3,14 @@ package ru.tsystems.reha.controller;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.tsystems.reha.entity.Event;
+import ru.tsystems.reha.entity.EventStatus;
 import ru.tsystems.reha.entity.Patient;
 import ru.tsystems.reha.service.EventService;
 import ru.tsystems.reha.service.ServiceException;
@@ -25,7 +27,7 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping("/list")
-    public String listPatients(@RequestParam("treatmentId") int treatmentId, Model model) { //}, Authentication authentication) {
+    public String listPatients(@RequestParam("treatmentId") int treatmentId, Model model, Authentication authentication) { //}, Authentication authentication) {
         try {
             List<Event> events;
 
@@ -36,8 +38,10 @@ public class EventController {
             }
             else
                 events = eventService.getEvents();
+            model.addAttribute("userDto", authentication.getPrincipal());
             model.addAttribute("events", events);
             model.addAttribute("treatmentId", treatmentId);
+            model.addAttribute("statuses", EventStatus.values());
 
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);

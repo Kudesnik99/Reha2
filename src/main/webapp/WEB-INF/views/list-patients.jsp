@@ -15,19 +15,18 @@
 <div class="container-fluid">
     <div class="row">
         <jsp:include page="parts/left-bar.jsp"/>
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                <h1 class="page-header"><spring:message code="patient.list_form_title"/></h1>
-                <h2 class="sub-header">${userDto.role.getRoleName()}: ${fn:trim(userDto.lastName)} ${fn:trim(userDto.firstName)}</h2>
-
-               <input type="button" value="<spring:message code="patient.add_button"/>"
-               onclick="window.location.href='addPatient'; return false;"
-               class="btn btn-primary"/>
-        <br/><br/>
-        <%--div class="panel panel-info">
-            <div class="panel-heading">
-                <div class="panel-title"><spring:message code="patient.list"/></div>
-            </div>
-            <div class="panel-body table-responsive"--%>
+        <script> document.querySelector("#patients").classList.add("active"); </script>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header"><spring:message code="patient.h1_title"/></h1>
+            <input type="button" value="<spring:message code="patient.add_button"/>"
+                   onclick="window.location.href='addPatient'; return false;"
+                   class="btn btn-primary"/>
+            <br/><br/>
+            <%--div class="panel panel-info">
+                <div class="panel-heading">
+                    <div class="panel-title"><spring:message code="patient.list"/></div>
+                </div>
+                <div class="panel-body table-responsive"--%>
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <tr>
@@ -62,8 +61,10 @@
                             <td>${tempPatient.lastName}</td>
                             <td>${tempPatient.diagnosis}</td>
                             <td>${tempPatient.insuranceNum}</td>
-                            <td><c:if test="${tempPatient.discharged eq true}"><spring:message code="patient.discharged"/></c:if>
-                                <c:if test="${tempPatient.discharged eq false}"><spring:message code="patient.notdischarged"/></c:if>
+                            <td><c:if test="${tempPatient.discharged eq true}"><spring:message
+                                    code="patient.discharged"/></c:if>
+                                <c:if test="${tempPatient.discharged eq false}"><spring:message
+                                        code="patient.notdischarged"/></c:if>
                             </td>
                             <td>${fn:trim(userDto.lastName)}</td>
                             <td>${tempPatient.email}</td>
@@ -73,8 +74,8 @@
                             <td>
                                 <a href="${updateLink}">Update</a> /
                                 <a href="${deleteLink}"
-                                     onclick="if (!(confirm('<spring:message
-                                             code="patient.confirm"/>'))) return false">Delete</a> /
+                                   onclick="if (!(confirm('<spring:message
+                                           code="patient.confirm"/>'))) return false">Delete</a> /
                                 <a href="${treatmentLink}">Treatments</a>
                             </td>
 
@@ -87,8 +88,9 @@
         </div>
     </div>
 </div>
-    <script src="<c:url value="/resources/js/jquery.min.js" />"></script>
-    <script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
-    <script src="<c:url value="/resources/js/holder.min.js" />"></script>
+
+<script src="<c:url value="/resources/js/jquery.min.js" />"></script>
+<script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
+<script src="<c:url value="/resources/js/holder.min.js" />"></script>
 </body>
 </html>

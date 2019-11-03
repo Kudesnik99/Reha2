@@ -12,7 +12,7 @@ public interface TreatmentDao extends GenericDao<Treatment>{
 
     public Treatment getTreatment(int theId);
 
-    public void deleteTreatment(int theId);
+    public void deleteTreatment(int theId) throws DaoException;
 
     public List<Treatment> findByPatientId(int theId);
 }

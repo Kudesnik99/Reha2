@@ -9,14 +9,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import ru.tsystems.reha.dto.UserDto;
-import ru.tsystems.reha.entity.Patient;
-import ru.tsystems.reha.entity.Pattern;
-import ru.tsystems.reha.entity.Remedy;
-import ru.tsystems.reha.entity.Treatment;
+import ru.tsystems.reha.entity.*;
 import ru.tsystems.reha.model.TreatmentForm;
 import ru.tsystems.reha.model.TreatmentFormConverter;
 import ru.tsystems.reha.service.*;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +44,6 @@ public class TreatmentController {
                 treatments = treatmentService.getTreatmentsByPatientId(patientId);
                 Patient patient = patientService.getPatient(patientId);
                 model.addAttribute("patient", patient);
-
             } else {
                 treatments = treatmentService.getTreatments();
             }
@@ -64,11 +61,11 @@ public class TreatmentController {
     }
 
     @GetMapping("/showForm")
-    public String showFormForSave(@RequestParam("patientId") int theId,
+    public String showFormForSave(@RequestParam("patientId") int patientId,
                                   Model model) {
         try {
             TreatmentForm treatmentForm = new TreatmentForm();
-            treatmentForm.setPatient(treatmentService.getPatientByPatientId(theId));
+            treatmentForm.setPatient(patientService.getPatient(patientId));
             treatmentForm.setPatientId(treatmentForm.getPatient().getPatientId());
             model.addAttribute("treatmentForm", treatmentForm);
             initReferenceBooks(model);
@@ -80,20 +77,6 @@ public class TreatmentController {
             model.addAttribute("exception", e.getMessage());
         }
         return "treatment-form";
-    }
-
-    @PostMapping("/saveTreatment")
-    public String saveTreatment(@ModelAttribute("treatmentForm") TreatmentForm treatmentForm) {
-        try {
-            //theTreatment.getPatient()
-            treatmentService.saveTreatment(treatmentForm);
-        } catch (ServiceException e) {
-            LOG.warn(e.getError().getMessageForLog(), e);
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-        }
-        Patient patient = treatmentForm.getPatient();
-        return "redirect:/treatment/list?patientId=" + patient.getPatientId();
     }
 
     @GetMapping("/updateForm")
@@ -112,9 +95,29 @@ public class TreatmentController {
         return "treatment-form";
     }
 
+
+    @PostMapping("/saveTreatment")
+    public String saveTreatment(@ModelAttribute("treatmentForm") TreatmentForm treatmentForm) {
+        try {
+            //theTreatment.getPatient()
+            treatmentForm.setPatient(patientService.getPatient(treatmentForm.getPatientId()));
+            treatmentService.saveTreatment(treatmentForm);
+        } catch (ServiceException e) {
+            LOG.warn(e.getError().getMessageForLog(), e);
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+        }
+        Patient patient = treatmentForm.getPatient();
+        return "redirect:/treatment/list?patientId=" + patient.getPatientId();
+    }
+
     @GetMapping("/delete")
     public String deleteTreatment(@RequestParam("treatmentId") int theId) {
-        treatmentService.deleteTreatment(theId);
+        try {
+            treatmentService.deleteTreatment(theId);
+        } catch (ServiceException e) {
+            LOG.warn(e.getError().getMessageForLog(), e);
+        }
         return "redirect:/treatment/list?treatmentId=0";
     }
 
@@ -145,8 +148,15 @@ public class TreatmentController {
             List<Pattern> patterns = patternService.getPatterns();
             model.addAttribute("remedies", remedies);
             model.addAttribute("patterns", patterns);
+            model.addAttribute("statuses", TreatmentStatus.values());
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
         }
     }
+
+//    public String dateTimeFormat(Date date) {
+//        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+//        return dateFormat.format(date);
+//    }
+
 }

@@ -5,15 +5,11 @@ import java.util.Date;
 
 @Entity
 @Table(name = "treatment")
-//@NamedQuery(name = "User.findByEmail", query = "select u from User u where u.email = :email")
 @NamedQueries({
         @NamedQuery(name = "Treatment.findByPatient", query = "select tr from Treatment tr " +
                 "where tr.patient.patientId = :patientId")})
 public class Treatment {
     public Treatment(){}
-
-    //private Patient patientByPatientId;
-    //private Remedy remedyByRemedyId;
 
     //---------------------------------------------------------
     @Id
@@ -26,19 +22,6 @@ public class Treatment {
     public void setTreatmentId(int treatmentId) {
         this.treatmentId = treatmentId;
     }
-
-    //---------------------------------------------------------
-    //    @Basic
-//    @Column(name = "time_pattern")
-//    private String timePattern;
-//
-//    public String getTimePattern() {
-//        return timePattern;
-//    }
-//
-//    public void setTimePattern(String timePattern) {
-//        this.timePattern = timePattern;
-//    }
 
     //---------------------------------------------------------
     @Column(name = "description")
@@ -82,12 +65,12 @@ public class Treatment {
 
     //---------------------------------------------------------
     @Column(name = "status")
-    private String status;
-    public String getStatus() {
+    @Enumerated(EnumType.STRING)
+    private TreatmentStatus status;
+    public TreatmentStatus getStatus() {
         return status;
     }
-
-    public void setStatus(String status) {
+    public void setStatus(TreatmentStatus status) {
         this.status = status;
     }
 

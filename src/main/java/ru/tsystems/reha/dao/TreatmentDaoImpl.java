@@ -28,10 +28,14 @@ public class TreatmentDaoImpl extends GenericDaoImpl<Treatment> implements Treat
     }
 
     @Override
-    public void deleteTreatment(int id) {
-        Session session = sessionFactory.getCurrentSession();
-        Treatment book = session.byId(Treatment.class).load(id);
-        session.delete(book);
+    public void deleteTreatment(int treatmentId) throws DaoException {
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            Treatment treatment = session.byId(Treatment.class).load(treatmentId);
+            remove(treatment);
+        } catch (PersistenceException e) {
+            throw new DaoException(ErrorDao.PERSIST_EXCEPTION, e);
+        }
     }
 
     @Override

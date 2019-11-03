@@ -1,9 +1,6 @@
 package ru.tsystems.reha.model;
 
-import ru.tsystems.reha.entity.Patient;
-import ru.tsystems.reha.entity.Pattern;
-import ru.tsystems.reha.entity.Remedy;
-import ru.tsystems.reha.entity.Treatment;
+import ru.tsystems.reha.entity.*;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -17,7 +14,7 @@ public class TreatmentForm {
     private Date period_start;
     private Date period_end;
     private int dose;
-    private String status;
+    private TreatmentStatus status;
     private String treatmentResult;
     private Patient patient;
     private int patientId;
@@ -79,10 +76,10 @@ public class TreatmentForm {
         this.dose = dose;
     }
 
-    public String getStatus() {
+    public TreatmentStatus getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+    public void setStatus(TreatmentStatus status) {
         this.status = status;
     }
 

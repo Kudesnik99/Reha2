@@ -1,22 +1,15 @@
 package ru.tsystems.reha.service;
 
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.reha.dao.*;
-import ru.tsystems.reha.entity.Event;
-import ru.tsystems.reha.entity.Patient;
-import ru.tsystems.reha.entity.Pattern;
-import ru.tsystems.reha.entity.Treatment;
-import ru.tsystems.reha.model.PatientFormConverter;
+import ru.tsystems.reha.entity.*;
 import ru.tsystems.reha.model.TreatmentForm;
 import ru.tsystems.reha.model.TreatmentFormConverter;
 
-import java.lang.reflect.InvocationTargetException;
-import java.security.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -82,8 +75,13 @@ public class TreatmentServiceImpl implements TreatmentService {
 
     @Override
     @Transactional
-    public void deleteTreatment(int theId) {
-        treatmentDao.deleteTreatment(theId);
+    public void deleteTreatment(int treatmentId) throws ServiceException {
+        try {
+            treatmentDao.deleteTreatment(treatmentId);
+        } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ErrorService.PERSIST_EXCEPTION, e);
+        }
     }
 
     @Override
@@ -125,8 +123,8 @@ public class TreatmentServiceImpl implements TreatmentService {
                 eventDate = generator.next(eventDate);
                 event = new Event();
                 event.setDateTime(eventDate);
-                event.setTreatmentId(treatment);
-                event.setStatus("Planned");
+                event.setTreatment(treatment);
+                event.setStatus(EventStatus.PLANNED);
                 eventDao.saveOrUpdate(event);
                 result.add(event);
             } while (eventDate != null && (eventDate.before(treatment.getPeriod_end())));

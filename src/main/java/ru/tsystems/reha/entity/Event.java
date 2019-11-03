@@ -23,8 +23,8 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "treatment_id", referencedColumnName = "treatment_id", nullable = false)
     private Treatment treatment;
-    public Treatment getTreatmentId() { return treatment; }
-    public void setTreatmentId(Treatment treatment) {this.treatment = treatment; }
+    public Treatment getTreatment() { return treatment; }
+    public void setTreatment (Treatment treatment) {this.treatment = treatment; }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_time")
@@ -35,11 +35,12 @@ public class Event {
     public void setDateTime(Date dateTime) { this.dateTime = dateTime; }
 
     @Column(name = "status")
-    private String status;
-    public String getStatus() {
+    @Enumerated(EnumType.STRING)
+    private EventStatus status;
+    public EventStatus getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+    public void setStatus(EventStatus status) {
         this.status = status;
     }
 

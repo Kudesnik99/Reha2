@@ -1,7 +1,6 @@
-<%@ page import="java.awt.*" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="windows-1251" %>
 <!DOCTYPE html>
 <html>
@@ -16,11 +15,11 @@
 <div class="container-fluid">
     <div class="row">
         <jsp:include page="parts/left-bar.jsp"/>
+        <script> document.querySelector("#patterns").classList.add("active"); </script>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <div class="container">
                 <div class="col-md-offset-1 col-md-10">
                     <h2><spring:message code="pattern.list_form_title"/></h2>
-
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             <div class="panel-title"><spring:message code="pattern.edit_form_title"/></div>

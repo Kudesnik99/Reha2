@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.tsystems.reha.entity.Remedy;
+import ru.tsystems.reha.entity.RemedyType;
 import ru.tsystems.reha.service.RemedyService;
 import ru.tsystems.reha.service.ServiceException;
 
@@ -48,6 +49,7 @@ public class RemedyController {
         try {
             Remedy remedy = remedyService.getRemedy(theId);
             theModel.addAttribute("remedy", remedy);
+            theModel.addAttribute("remedyTypes", RemedyType.values());
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
         }
@@ -58,19 +60,17 @@ public class RemedyController {
     public String showFormForAdd(Model theModel) {
         Remedy remedy = new Remedy();
         theModel.addAttribute("remedy", remedy);
+        theModel.addAttribute("remedyTypes", RemedyType.values());
         return "remedy-form";
     }
 
     @GetMapping("/delete")
     public String deleteRemedy(@RequestParam("remedyId") int theId) {
-        remedyService.deleteRemedy(theId);
+        try {
+            remedyService.deleteRemedy(theId);
+        } catch (ServiceException e) {
+            LOG.warn(e.getError().getMessageForLog(), e);
+        }
         return "redirect:/remedy/list";
     }
 }
-//
-//    @GetMapping("/delete")
-//    public String deleteUser(@RequestParam("userId") int theId) {
-//        userService.deleteUser(theId);
-//        return "redirect:/user/list";
-//    }
-//}

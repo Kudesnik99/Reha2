@@ -15,7 +15,7 @@ public interface TreatmentService {
 
     public Treatment getTreatment(int theId) throws ServiceException;
 
-    public void deleteTreatment(int theId);
+    public void deleteTreatment(int theId) throws ServiceException;
 
     public Patient getPatientByPatientId(int theId) throws ServiceException;
 

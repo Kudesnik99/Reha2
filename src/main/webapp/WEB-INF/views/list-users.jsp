@@ -14,6 +14,7 @@
 <div class="container-fluid">
     <div class="row">
         <jsp:include page="parts/left-bar.jsp"/>
+        <script> document.querySelector("#users").classList.add("active"); </script>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
             <div class="container">

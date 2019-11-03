@@ -23,17 +23,20 @@
 <div class="container-fluid">
     <div class="row">
         <jsp:include page="parts/left-bar.jsp"/>
+        <script> document.querySelector("#treatments").classList.add("active"); </script>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <h1 class="page-header"><spring:message code="treatment.doctor"/>: ${fn:trim(userDto.lastName)} ${fn:trim(userDto.firstName)}</h1>
+            <h1 class="page-header"><spring:message code="treatment.h1Title"/></h1>
             <h2 class="sub-header">
                 <spring:message code="treatment.list_form_title"/>:
                 <c:if test="${patientId gt 0}">${patient.lastName}</c:if>
                 <c:if test="${patientId eq 0}">All patients</c:if>
             </h2>
 
+            <c:if test="${patientId gt 0}">
             <input type="button" value="<spring:message code="treatment.add_button"/>"
                    onclick="window.location.href='showForm?patientId=${param.patientId}'; return false;"
                    class="btn btn-primary"/>
+            </c:if>
             <br/><br/> <table class="table table-striped table-bordered">
                     <tr>
                         <th><spring:message code="treatment.time_pattern"/></th>
@@ -63,14 +66,19 @@
                             <c:param name="patientId" value="${tempTreatment.patient.patientId}" />
                         </c:url>
 
+                        <c:url var="showLink" value="/event/list">
+                            <c:param name="treatmentId" value="${tempTreatment.treatmentId}" />
+                            <c:param name="patientId" value="${tempTreatment.patient.patientId}" />
+                        </c:url>
+
                         <tr>
                             <td>${tempTreatment.timePattern.timePattern}</td>
                             <td>${tempTreatment.description}</td>
-                            <td>${tempTreatment.period_start.toString()}</td>
-                            <td>${tempTreatment.period_end.toString()}</td>
+                            <td>${tempTreatment.period_start}</td>
+                            <td>${tempTreatment.period_end}</td>
                             <td>${fn:trim(tempTreatment.remedy.name)}</td>
-                            <td>${tempTreatment.dose.toString()}</td>
-                            <td>${tempTreatment.status}</td>
+                            <td>${tempTreatment.dose} ${fn:trim(tempTreatment.remedy.unit)}</td>
+                            <td>${tempTreatment.status.statusName}</td>
                             <td>${tempTreatment.treatmentResult}</td>
                             <td>${tempTreatment.patient.lastName}</td>
 
@@ -78,7 +86,8 @@
                                 <!-- display the update link --> <a href="${updateLink}">Update</a> /
                                 <a href="${deleteLink}"
                                      onclick="if (!(confirm('Are you sure you want to delete this customer?'))) return false">Delete</a> /
-                                <a href="${generateLink}">Generate events</a>
+                                <a href="${generateLink}">Generate events</a> /
+                                <a href="${showLink}">Show events</a>
                             </td>
 
                         </tr>
@@ -91,6 +100,7 @@
         </div>
     </div>
 </div>
+
     <script src="<c:url value="/resources/js/jquery.min.js" />"></script>
     <script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
     <script src="<c:url value="/resources/js/holder.min.js" />"></script>

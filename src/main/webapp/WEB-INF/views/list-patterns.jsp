@@ -15,6 +15,7 @@
 <div class="container-fluid">
     <div class="row">
         <jsp:include page="parts/left-bar.jsp"/>
+        <script> document.querySelector("#patterns").classList.add("active"); </script>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <div class="container">
                 <div class="col-md-offset-1 col-md-10">
@@ -36,6 +37,7 @@
                                     <th><spring:message code="pattern.template"/></th>
                                     <th><spring:message code="pattern.action"/></th>
                                 </tr>
+
 
                                 <!-- loop over and print our customers -->
                                 <c:forEach var="tempPattern" items="${pattern}">
@@ -74,5 +76,6 @@
         </div>
     </div>
 </div>
+
 </body>
 </html>

@@ -53,7 +53,12 @@ public class RemedyServiceImpl implements RemedyService {
 
     @Override
     @Transactional
-    public void deleteRemedy(int theId) {
-
+    public void deleteRemedy(int remedyId) throws ServiceException {
+        try {
+            remedyDao.deleteRemedy(remedyId);
+        } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ErrorService.PERSIST_EXCEPTION, e);
+        }
     }
 }

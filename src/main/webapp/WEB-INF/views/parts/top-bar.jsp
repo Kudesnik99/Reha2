@@ -14,11 +14,11 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">${userDto.role.getRoleName()}: ${fn:trim(userDto.lastName)} ${fn:trim(userDto.firstName)}</a>
+                <div class="navbar-brand"><spring:message code="project.main_name"/></div>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#">Dashboard</a></li>
+                    <li><a>${userDto.role.getRoleName()}: ${fn:trim(userDto.lastName)} ${fn:trim(userDto.firstName)}</a></li>
                     <li><a href="#">Profile</a></li>
                     <li><a href="#">Help</a></li>
                     <li><a href=${pageContext.request.contextPath}/logout>Logout</a></li>

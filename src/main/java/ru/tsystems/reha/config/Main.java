@@ -1,9 +1,6 @@
 package ru.tsystems.reha.config;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import ru.tsystems.reha.entity.TreatmentStatus;
 
 public class Main {
     public static void main(String[] args) {
@@ -21,5 +18,7 @@ public class Main {
 
 //        java.sql.Date date = new Date(119, 10, 14);
 //        System.out.println(date);
+//        Event temp = new Event();
+//        System.out.println(temp.getTreatment().getTimePattern().getTimePattern());
     }
 }

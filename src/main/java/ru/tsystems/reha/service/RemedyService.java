@@ -11,5 +11,5 @@ public interface RemedyService {
 
     public Remedy getRemedy(int theId) throws ServiceException;
 
-    public void deleteRemedy(int theId);
+    public void deleteRemedy(int theId) throws ServiceException;
 }
