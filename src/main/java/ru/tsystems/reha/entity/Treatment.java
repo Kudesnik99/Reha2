@@ -1,5 +1,7 @@
 package ru.tsystems.reha.entity;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -35,6 +37,7 @@ public class Treatment {
 
     //---------------------------------------------------------
     @Column(name = "period_start")
+    @DateTimeFormat(pattern = "MM-dd-yyyy")
     private Date period_start;
     public Date getPeriod_start() {
         return period_start;
@@ -45,6 +48,7 @@ public class Treatment {
 
     //---------------------------------------------------------
     @Column(name = "period_end")
+    @DateTimeFormat(pattern = "MM-dd-yyyy")
     private Date period_end;
     public Date getPeriod_end() {
         return period_end;
