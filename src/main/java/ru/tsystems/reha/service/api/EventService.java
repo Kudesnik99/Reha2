@@ -3,6 +3,7 @@ package ru.tsystems.reha.service.api;
 import ru.tsystems.reha.dto.EventDto;
 import ru.tsystems.reha.dto.PatientDto;
 import ru.tsystems.reha.dto.PatternDto;
+import ru.tsystems.reha.entity.enums.EventStatus;
 import ru.tsystems.reha.service.exception.ServiceException;
 
 import java.util.List;

@@ -68,12 +68,13 @@ public class EventController {
 
     @PostMapping("/updateEvent")
     public String updateEvent(@ModelAttribute("event") EventDto eventDto) {
+        Long treatmentId = eventDto.getTreatmentDto().getTreatmentId();
         try {
             eventService.saveEvent(eventDto);
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
         }
-        return "redirect:/event/list";
+        return "redirect:/event/list?treatmentId=" + treatmentId;
     }
 
     @InitBinder

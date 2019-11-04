@@ -6,14 +6,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.reha.converters.EventConverter;
 import ru.tsystems.reha.converters.PatientConverter;
-import ru.tsystems.reha.converters.PatternConverter;
 import ru.tsystems.reha.dao.api.EventDao;
 import ru.tsystems.reha.dao.api.TreatmentDao;
 import ru.tsystems.reha.dao.exception.DaoException;
 import ru.tsystems.reha.dto.EventDto;
 import ru.tsystems.reha.dto.PatientDto;
-import ru.tsystems.reha.dto.PatternDto;
 import ru.tsystems.reha.entity.Event;
+import ru.tsystems.reha.entity.Treatment;
+import ru.tsystems.reha.entity.enums.EventStatus;
+import ru.tsystems.reha.entity.enums.TreatmentStatus;
 import ru.tsystems.reha.service.api.EventService;
 import ru.tsystems.reha.service.exception.ServiceError;
 import ru.tsystems.reha.service.exception.ServiceException;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 @Service
 public class EventServiceImpl implements EventService {
 
-    private static final Logger LOG = Logger.getLogger(TreatmentServiceImpl.class);
+    private static final Logger LOG = Logger.getLogger(EventServiceImpl.class);
 
     private final EventDao eventDao;
 
@@ -85,10 +86,44 @@ public class EventServiceImpl implements EventService {
     @Transactional
     public void saveEvent(EventDto eventDto) throws ServiceException {
         try {
-            Event event = EventConverter.toEvent(eventDto);
-            event.setTreatment(treatmentDao.findById(eventDto.getTreatmentDto().getTreatmentId()));
+            boolean needToUpdateTreatment = false;
+
+            Event event = eventDao.findById(eventDto.getEventId());
+            if (event.getStatus() != eventDto.getStatus()) needToUpdateTreatment = true;
+            EventConverter.updateEvent(event, eventDto);
             eventDao.saveOrUpdate(event);
+            if (needToUpdateTreatment) updateTreatmentStatus(event.getTreatment());
         } catch (DaoException | ParseException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
+        }
+    }
+
+    private void updateTreatmentStatus(Treatment treatment) throws ServiceException {
+        long executedCount;
+        long plannedCount;
+        long allCount;
+        long cancelledCount;
+
+        try {
+        plannedCount = eventDao.countSomeStatus(EventStatus.PLANNED);
+        executedCount = eventDao.countSomeStatus(EventStatus.EXECUTED);
+        allCount = eventDao.countAll();
+        cancelledCount = allCount - (plannedCount + executedCount);
+
+        if (plannedCount < allCount) {
+            if (plannedCount == 0) {
+                if (cancelledCount == 0)
+                    treatment.setStatus(TreatmentStatus.EXECUTED);
+                else
+                    treatment.setStatus(TreatmentStatus.PARTLY_EXECUTED);
+            } else treatment.setStatus(TreatmentStatus.PROCESSING);
+        }
+                treatmentDao.saveTreatment(treatment);
+        } catch(
+                DaoException e)
+
+        {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
         }

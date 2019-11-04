@@ -11,6 +11,7 @@ import ru.tsystems.reha.dao.exception.DaoException;
 import ru.tsystems.reha.dto.TreatmentDto;
 import ru.tsystems.reha.entity.*;
 import ru.tsystems.reha.entity.enums.EventStatus;
+import ru.tsystems.reha.entity.enums.TreatmentStatus;
 import ru.tsystems.reha.service.api.TreatmentService;
 import ru.tsystems.reha.service.exception.ServiceError;
 import ru.tsystems.reha.service.exception.ServiceException;
@@ -136,6 +137,8 @@ public class TreatmentServiceImpl implements TreatmentService {
                 event.setStatus(EventStatus.PLANNED);
                 eventDao.saveOrUpdate(event);
             } while (eventDate.before(treatment.getPeriodEnd()));
+            treatment.setStatus(TreatmentStatus.ASSIGNED);
+            treatmentDao.saveTreatment(treatment);
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);

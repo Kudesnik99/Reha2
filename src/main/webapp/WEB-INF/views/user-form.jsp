@@ -43,6 +43,7 @@
                                             code="user.last_name"/></label>
                                     <div class="col-md-9">
                                         <form:input path="lastName" cssClass="form-control"/>
+                                        <form:errors path="lastName" cssClass="help-block"/>
                                     </div>
                                 </div>
 
@@ -59,6 +60,7 @@
                                             code="user.email"/></label>
                                     <div class="col-md-9">
                                         <form:input path="email" cssClass="form-control"/>
+                                        <form:errors path="email" cssClass="help-block"/>
                                     </div>
                                 </div>
 

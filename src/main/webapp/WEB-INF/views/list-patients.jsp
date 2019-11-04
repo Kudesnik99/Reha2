@@ -75,7 +75,7 @@
                                 <a href="${updateLink}">Update</a> /
                                 <a href="${deleteLink}"
                                    onclick="if (!(confirm('<spring:message
-                                           code="patient.confirm"/>'))) return false">Delete</a> /
+                                           code="patient.confirm"/>'))) return false">Discharge</a> /
                                 <a href="${treatmentLink}">Treatments</a>
                             </td>
 

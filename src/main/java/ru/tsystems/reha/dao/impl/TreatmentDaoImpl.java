@@ -1,11 +1,14 @@
 package ru.tsystems.reha.dao.impl;
 
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 import ru.tsystems.reha.dao.api.TreatmentDao;
 import ru.tsystems.reha.dao.exception.DaoError;
 import ru.tsystems.reha.dao.exception.DaoException;
 import ru.tsystems.reha.entity.Treatment;
+import ru.tsystems.reha.entity.enums.EventStatus;
+import ru.tsystems.reha.entity.enums.TreatmentStatus;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
@@ -46,5 +49,21 @@ public class TreatmentDaoImpl extends GenericDaoImpl<Treatment, Long> implements
         TypedQuery<Treatment> query = session.createNamedQuery("Treatment.findByPatient", Treatment.class);
         query.setParameter("patientId", id);
         return query.getResultList();
+    }
+
+    @Override
+    public Long countSomeStatus(TreatmentStatus status) throws DaoException {
+        Session session = sessionFactory.getCurrentSession();
+        Query<Long> query = session.createNamedQuery("Treatment.countSomeStatus", Long.class);
+        query.setParameter("status", status);
+        return query.uniqueResult();
+    }
+
+    @Override
+    public Long countAll() throws DaoException {
+        Session session = sessionFactory.getCurrentSession();
+        Query<Long> query = session.createNamedQuery("Treatment.countAll", Long.class);
+        return query.uniqueResult();
+
     }
 }

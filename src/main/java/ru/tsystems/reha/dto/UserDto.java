@@ -6,6 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import ru.tsystems.reha.entity.Role;
 import ru.tsystems.reha.entity.User;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -30,6 +34,7 @@ public class UserDto implements UserDetails {
 
     private String firstName;
 
+    @NotBlank
     private String lastName;
 
     private String avatar;

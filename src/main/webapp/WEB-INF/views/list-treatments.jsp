@@ -86,8 +86,13 @@
                                 <!-- display the update link --> <a href="${updateLink}">Update</a> /
                                 <a href="${deleteLink}"
                                      onclick="if (!(confirm('Are you sure you want to delete this customer?'))) return false">Delete</a> /
-                                <a href="${generateLink}">Generate events</a> /
-                                <a href="${showLink}">Show events</a>
+
+                                <c:if test="${tempTreatment.status eq 'PLANNED'}">
+                                    <a href="${generateLink}">Generate events</a>
+                                </c:if>
+                                <c:if test="${tempTreatment.status ne 'PLANNED'}">
+                                    <a href="${showLink}">Show events</a>
+                                </c:if>
                             </td>
 
                         </tr>
