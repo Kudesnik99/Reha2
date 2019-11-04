@@ -10,8 +10,6 @@ public interface TreatmentDao extends GenericDao<Treatment, Long> {
 
     void saveTreatment(Treatment treatment);
 
-    Treatment getTreatment(Long id);
-
     void deleteTreatment(Long id) throws DaoException;
 
     List<Treatment> findByPatientId(Long id);

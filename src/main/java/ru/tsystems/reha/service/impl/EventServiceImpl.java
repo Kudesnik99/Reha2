@@ -6,15 +6,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.reha.converters.EventConverter;
 import ru.tsystems.reha.converters.PatientConverter;
+import ru.tsystems.reha.converters.PatternConverter;
 import ru.tsystems.reha.dao.api.EventDao;
 import ru.tsystems.reha.dao.api.TreatmentDao;
 import ru.tsystems.reha.dao.exception.DaoException;
 import ru.tsystems.reha.dto.EventDto;
 import ru.tsystems.reha.dto.PatientDto;
+import ru.tsystems.reha.dto.PatternDto;
+import ru.tsystems.reha.entity.Event;
 import ru.tsystems.reha.service.api.EventService;
 import ru.tsystems.reha.service.exception.ServiceError;
 import ru.tsystems.reha.service.exception.ServiceException;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,7 +62,36 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public PatientDto getPatientByTreatmentId(Long treatmentId) throws ServiceException {
-        return PatientConverter.toPatientDto(treatmentDao.getTreatment(treatmentId).getPatient());
+        try {
+            return PatientConverter.toPatientDto(treatmentDao.findById(treatmentId).getPatient());
+        } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public EventDto getEvent(Long id) throws ServiceException {
+        try {
+            return EventConverter.toEventDto(eventDao.findById(id));
+        } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void saveEvent(EventDto eventDto) throws ServiceException {
+        try {
+            Event event = EventConverter.toEvent(eventDto);
+            event.setTreatment(treatmentDao.findById(eventDto.getTreatmentDto().getTreatmentId()));
+            eventDao.saveOrUpdate(event);
+        } catch (DaoException | ParseException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
+        }
     }
 
 }

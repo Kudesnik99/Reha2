@@ -41,11 +41,6 @@ public class TreatmentDaoImpl extends GenericDaoImpl<Treatment, Long> implements
     }
 
     @Override
-    public Treatment getTreatment(Long id) {
-        return new Treatment();
-    }
-
-    @Override
     public List<Treatment> findByPatientId(Long id) {
         Session session = sessionFactory.getCurrentSession();
         TypedQuery<Treatment> query = session.createNamedQuery("Treatment.findByPatient", Treatment.class);

@@ -63,16 +63,16 @@
 
                         <c:url var="generateLink" value="/treatment/generate">
                             <c:param name="treatmentId" value="${tempTreatment.treatmentId}" />
-                            <c:param name="patientId" value="${tempTreatment.patient.patientId}" />
+                            <c:param name="patientId" value="${tempTreatment.patientDto.patientId}" />
                         </c:url>
 
                         <c:url var="showLink" value="/event/list">
                             <c:param name="treatmentId" value="${tempTreatment.treatmentId}" />
-                            <c:param name="patientId" value="${tempTreatment.patient.patientId}" />
+                            <c:param name="patientId" value="${tempTreatment.patientDto.patientId}" />
                         </c:url>
 
                         <tr>
-                            <td>${tempTreatment.timePattern.timePattern}</td>
+                            <td>${tempTreatment.patternDto.timePattern}</td>
                             <td>${tempTreatment.description}</td>
                             <td>${tempTreatment.period_start}</td>
                             <td>${tempTreatment.period_end}</td>
@@ -80,7 +80,7 @@
                             <td>${tempTreatment.dose} ${fn:trim(tempTreatment.remedy.unit)}</td>
                             <td>${tempTreatment.status.statusName}</td>
                             <td>${tempTreatment.treatmentResult}</td>
-                            <td>${tempTreatment.patient.lastName}</td>
+                            <td>${tempTreatment.patientDto.lastName}</td>
 
                             <td>
                                 <!-- display the update link --> <a href="${updateLink}">Update</a> /

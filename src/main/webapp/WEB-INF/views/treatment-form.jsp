@@ -32,20 +32,20 @@
 
                                 <!-- need to associate this data with treatment id -->
                                 <form:hidden path="treatmentId"/>
-                                <form:hidden path="patientId"/>
+                                <form:hidden path="patientDto.patientId"/>
 
                                 <div class="form-group">
                                     <label class="col-md-3 control-label"><spring:message
                                             code="treatment.patient"/></label>
                                     <div class="col-md-9">
-                                        <label class="form-control">${fn:trim(treatmentForm.patient.lastName)}</label>
+                                        <label class="form-control">${fn:trim(treatmentForm.patientDto.lastName)}</label>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="remedy.remedyId" class="col-md-3 control-label"><spring:message
+                                    <label for="remedyDto.remedyId" class="col-md-3 control-label"><spring:message
                                             code="treatment.remedy"/></label>
                                     <div class="col-md-9">
-                                        <form:select path="remedy.remedyId" cssClass="form-control">
+                                        <form:select path="remedyDto.remedyId" cssClass="form-control">
                                             <c:forEach var='item' items='${remedies}'>
                                                 <form:option value="${item.remedyId}" label="${item.name}"/>
                                             </c:forEach>
@@ -55,10 +55,10 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="timePattern.patternId" class="col-md-3 control-label"><spring:message
+                                    <label for="patternDto.patternId" class="col-md-3 control-label"><spring:message
                                             code="treatment.time_pattern"/></label>
                                     <div class="col-md-9">
-                                        <form:select path="timePattern.patternId" cssClass="form-control">
+                                        <form:select path="patternDto.patternId" cssClass="form-control">
                                             <c:forEach var='item' items='${patterns}'>
                                                 <form:option value="${item.patternId}" label="${item.timePattern}"/>
                                             </c:forEach>
@@ -109,7 +109,6 @@
                                             <form:option value="${item}" label="${item.statusName}"/>
                                         </c:forEach>
                                     </form:select>
-                                        <%--<form:input path="timePattern" cssClass="form-control" />--%>
                                 </div>
                                 </div>
 

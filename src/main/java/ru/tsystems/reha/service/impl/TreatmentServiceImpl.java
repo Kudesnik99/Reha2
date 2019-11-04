@@ -6,16 +6,10 @@ import org.springframework.scheduling.support.CronSequenceGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.reha.converters.TreatmentConverter;
-import ru.tsystems.reha.dao.api.EventDao;
-import ru.tsystems.reha.dao.api.PatientDao;
-import ru.tsystems.reha.dao.api.PatternDao;
-import ru.tsystems.reha.dao.api.TreatmentDao;
+import ru.tsystems.reha.dao.api.*;
 import ru.tsystems.reha.dao.exception.DaoException;
 import ru.tsystems.reha.dto.TreatmentDto;
-import ru.tsystems.reha.entity.Event;
-import ru.tsystems.reha.entity.Patient;
-import ru.tsystems.reha.entity.Pattern;
-import ru.tsystems.reha.entity.Treatment;
+import ru.tsystems.reha.entity.*;
 import ru.tsystems.reha.entity.enums.EventStatus;
 import ru.tsystems.reha.service.api.TreatmentService;
 import ru.tsystems.reha.service.exception.ServiceError;
@@ -38,12 +32,16 @@ public class TreatmentServiceImpl implements TreatmentService {
 
     private final EventDao eventDao;
 
+    private final RemedyDao remedyDao;
+
     @Autowired
-    public TreatmentServiceImpl(TreatmentDao treatmentDao, PatientDao patientDao, PatternDao patternDao, EventDao eventDao) {
+    public TreatmentServiceImpl(TreatmentDao treatmentDao, PatientDao patientDao,
+                                PatternDao patternDao, EventDao eventDao, RemedyDao remedyDao) {
         this.treatmentDao = treatmentDao;
         this.patientDao = patientDao;
         this.patternDao = patternDao;
         this.eventDao = eventDao;
+        this.remedyDao = remedyDao;
     }
 
     @Override
@@ -61,9 +59,13 @@ public class TreatmentServiceImpl implements TreatmentService {
     @Transactional
     public void saveTreatment(TreatmentDto treatmentDto) throws ServiceException {
         try {
-            Patient patient = patientDao.findById(treatmentDto.getPatientId());
             Treatment treatment = TreatmentConverter.toTreatment(treatmentDto);
+            Patient patient = patientDao.findById(treatmentDto.getPatientDto().getPatientId());
+            Pattern pattern = patternDao.findById(treatmentDto.getPatternDto().getPatternId());
+            Remedy remedy = remedyDao.findById(treatmentDto.getRemedyDto().getRemedyId());
             treatment.setPatient(patient);
+            treatment.setTimePattern(pattern);
+            treatment.setRemedy(remedy);
             treatmentDao.saveOrUpdate(treatment);
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
@@ -133,7 +135,7 @@ public class TreatmentServiceImpl implements TreatmentService {
                 event.setTreatment(treatment);
                 event.setStatus(EventStatus.PLANNED);
                 eventDao.saveOrUpdate(event);
-            } while (eventDate != null && (eventDate.before(treatment.getPeriodEnd())));
+            } while (eventDate.before(treatment.getPeriodEnd()));
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
