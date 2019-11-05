@@ -22,8 +22,8 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         } else if (role.contains("DOCTOR")) {
             targetUrl = "/patient/list";
         } else if (role.contains("NURSE")) {
-            targetUrl = "/error-page";
-        }
+            targetUrl = "/patient/list";
+        } else targetUrl = "/error-page";
         return targetUrl;
     }
 }

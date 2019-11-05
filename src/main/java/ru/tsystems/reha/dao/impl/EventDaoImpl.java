@@ -12,7 +12,7 @@ import ru.tsystems.reha.entity.enums.EventStatus;
 
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -91,7 +91,12 @@ public class EventDaoImpl extends GenericDaoImpl<Event, Long> implements EventDa
             Session session = sessionFactory.getCurrentSession();
             TypedQuery<Event> query = session.createNamedQuery("Event.findByTreatmentIdDateTime", Event.class);
             query.setParameter("treatmentId", treatmentId);
-            query.setParameter("datetime", new Date());
+            query.setParameter("datetimeMin", new Date());
+            Calendar cal = Calendar.getInstance(); // creates calendar
+            cal.setTime(new Date()); // sets calendar time/date
+            cal.add(Calendar.DAY_OF_YEAR, 1); // adds one hour
+            Date dateMax = new Date(cal.getTimeInMillis());
+            query.setParameter("datetimeMax", dateMax);
             return query.getResultList();
         } catch (PersistenceException e) {
             throw new DaoException(DaoError.PERSIST_EXCEPTION, e);
@@ -99,8 +104,21 @@ public class EventDaoImpl extends GenericDaoImpl<Event, Long> implements EventDa
     }
 
     @Override
-    public List<Event> findByTreatmentIdThisHour(Long id) throws DaoException {
-        return new ArrayList<>();
+    public List<Event> findByTreatmentIdThisHour(Long treatmentId) throws DaoException {
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            TypedQuery<Event> query = session.createNamedQuery("Event.findByTreatmentIdDateTime", Event.class);
+            query.setParameter("treatmentId", treatmentId);
+            query.setParameter("datetimeMin", new Date());
+            Calendar cal = Calendar.getInstance(); // creates calendar
+            cal.setTime(new Date()); // sets calendar time/date
+            cal.add(Calendar.HOUR, 1); // adds one hour
+            Date dateMax = new Date(cal.getTimeInMillis());
+            query.setParameter("datetimeMax", dateMax);
+            return query.getResultList();
+        } catch (PersistenceException e) {
+            throw new DaoException(DaoError.PERSIST_EXCEPTION, e);
+        }
     }
 
     @Override
@@ -108,7 +126,12 @@ public class EventDaoImpl extends GenericDaoImpl<Event, Long> implements EventDa
         try {
             Session session = sessionFactory.getCurrentSession();
             TypedQuery<Event> query = session.createNamedQuery("Event.findByDateTime", Event.class);
-            query.setParameter("datetime", new Date());
+            query.setParameter("datetimeMin", new Date());
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DAY_OF_YEAR, 1);
+            Date dateMax = new Date(cal.getTimeInMillis());
+            query.setParameter("datetimeMax", dateMax);
             return query.getResultList();
         } catch (PersistenceException e) {
             throw new DaoException(DaoError.PERSIST_EXCEPTION, e);
@@ -117,6 +140,18 @@ public class EventDaoImpl extends GenericDaoImpl<Event, Long> implements EventDa
 
     @Override
     public List<Event> findThisHour() throws DaoException {
-        return new ArrayList<>();
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            TypedQuery<Event> query = session.createNamedQuery("Event.findByDateTime", Event.class);
+            query.setParameter("datetimeMin", new Date());
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.HOUR, 1);
+            Date dateMax = new Date(cal.getTimeInMillis());
+            query.setParameter("datetimeMax", dateMax);
+            return query.getResultList();
+        } catch (PersistenceException e) {
+            throw new DaoException(DaoError.PERSIST_EXCEPTION, e);
+        }
     }
 }
