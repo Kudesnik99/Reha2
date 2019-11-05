@@ -19,16 +19,31 @@
         <script> document.querySelector("#events").classList.add("active"); </script>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <h1 class="page-header"><spring:message code="event.list_form_title"/></h1>
-            <h2 class="sub-header">
+            <h2>
                 <spring:message code="event.header2"/>:
                     <c:if test="${treatmentId gt 0}">${events[0].treatmentDto.patientDto.lastName} ${events[0].treatmentDto.patientDto.firstName}</c:if>
                     <c:if test="${treatmentId eq 0}">All patients</c:if>
             </h2>
 
-            <%--input type="button" value="<spring:message code="patient.add_button"/>"
-                   onclick="window.location.href='addPatient'; return false;"
+
+            <c:if test="${treatmentId gt 0}">
+                <input type="button" value="<spring:message code="event.back"/>"
+                       onclick="window.location.href='../treatment/list?patientId=${patient.patientId}'; return false;"
+                       class="btn btn-primary"/>
+            </c:if>
+
+            <input type="button" value="<spring:message code="event.all"/>"
+                   onclick="window.location.href='../event/list?treatmentId=${treatmentId}'; return false;"
                    class="btn btn-primary"/>
-            <br/><br/--%>
+
+            <input type="button" value="<spring:message code="event.today"/>"
+                   onclick="window.location.href='../event/list?treatmentId=${treatmentId}&todayOnly=1'; return false;"
+                   class="btn btn-primary"/>
+
+            <input type="button" value="<spring:message code="event.thishour"/>"
+                   onclick="window.location.href='../event/list?treatmentId=${treatmentId}&thisHourOnly=1'; return false;"
+                   class="btn btn-primary"/>
+
             <div class="table-responsive">
                 <table class="table table-striped table-bordered">
                     <c:set var="currentTreatment" value="0" />
@@ -67,6 +82,8 @@
 
                 </table>
             </div>
+
+
         </div>
     </div>
 </div>

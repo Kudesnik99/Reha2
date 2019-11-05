@@ -32,6 +32,7 @@
 
                                 <!-- need to associate this data with customer id -->
                                 <form:hidden path="patientId"/>
+                                <form:hidden path="readyToDischarge"/>
 
                                 <div class="form-group">
                                     <label class="col-md-3 control-label">Doctor:</label>
@@ -114,6 +115,9 @@
                                 </div>
 
                             </form:form>
+
+
+
                         </div>
                     </div>
                 </div>

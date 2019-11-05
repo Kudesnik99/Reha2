@@ -9,6 +9,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,25 +34,31 @@
             </h2>
 
             <c:if test="${patientId gt 0}">
-            <input type="button" value="<spring:message code="treatment.add_button"/>"
-                   onclick="window.location.href='showForm?patientId=${param.patientId}'; return false;"
-                   class="btn btn-primary"/>
-            </c:if>
-            <br/><br/> <table class="table table-striped table-bordered">
-                    <tr>
-                        <th><spring:message code="treatment.time_pattern"/></th>
-                        <th><spring:message code="treatment.description"/></th>
-                        <th><spring:message code="treatment.period_start"/></th>
-                        <th><spring:message code="treatment.period_end"/></th>
-                        <th><spring:message code="treatment.remedy"/></th>
-                        <th><spring:message code="treatment.dose"/></th>
-                        <th><spring:message code="treatment.status"/></th>
-                        <th><spring:message code="treatment.treatment_result"/></th>
-                        <th><spring:message code="treatment.patient"/></th>
-                        <th><spring:message code="treatment.actions"/></th>
-                    </tr>
+                <input type="button" value="<spring:message code="treatment.add_button"/>"
+                       onclick="window.location.href='showForm?patientId=${param.patientId}'; return false;"
+                    class="btn btn-primary"/>
 
-                    <c:forEach var="tempTreatment" items="${treatments}">
+                <c:if test="${treatments.size() > 0 eq true}">
+
+                    <c:url var="dischargeLink" value="/patient/discharge">
+                        <c:param name="patientId" value="${treatments[0].patientDto.patientId}"/>
+                    </c:url>
+
+                    <c:if test="${treatments[0].patientDto.readyToDischarge eq true}">
+                        <input type="button" value="<spring:message code="treatment.discharge_button"/>" class="btn btn-primary"
+                        onclick="window.location.href='../patient/discharge?patientId=${treatments[0].patientDto.patientId}'">
+                     </c:if>
+
+                    <c:if test="${treatments[0].patientDto.readyToDischarge eq false}">
+                        <input type="button" value="<spring:message code="treatment.discharge_button"/>" class="btn btn-primary discharge-link"
+                           discharge-patient-id="${treatments[0].patientDto.patientId}">
+                    </c:if>
+                </c:if>
+
+            </c:if>
+            <table class="table table-striped table-bordered">
+            <c:set var="currentPatient" value="0" />
+                      <c:forEach var="tempTreatment" items="${treatments}">
 
                         <c:url var="updateLink" value="/treatment/updateForm">
                             <c:param name="treatmentId" value="${tempTreatment.treatmentId}" />
@@ -70,6 +77,30 @@
                             <c:param name="treatmentId" value="${tempTreatment.treatmentId}" />
                             <c:param name="patientId" value="${tempTreatment.patientDto.patientId}" />
                         </c:url>
+
+            <c:if test="${currentPatient ne tempTreatment.patientDto.patientId}">
+        </table>
+
+            <c:if test="${patientId eq 0}">
+                <p><c:out value="Patient: ${tempTreatment.patientDto.lastName} ${tempTreatment.patientDto.firstName}"/></p>
+            </c:if>
+
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th><spring:message code="treatment.time_pattern"/></th>
+                    <th><spring:message code="treatment.description"/></th>
+                    <th><spring:message code="treatment.period_start"/></th>
+                    <th><spring:message code="treatment.period_end"/></th>
+                    <th><spring:message code="treatment.remedy"/></th>
+                    <th><spring:message code="treatment.dose"/></th>
+                    <th><spring:message code="treatment.status"/></th>
+                    <th><spring:message code="treatment.treatment_result"/></th>
+                    <th><spring:message code="treatment.patient"/></th>
+                    <th><spring:message code="treatment.actions"/></th>
+                </tr>
+
+                <c:set var="currentPatient" value="${tempTreatment.patientDto.patientId}" />
+                </c:if>
 
                         <tr>
                             <td>${tempTreatment.patternDto.timePattern}</td>
@@ -106,8 +137,28 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Warning!</h4>
+            </div>
+            <div class="modal-body">
+                <p><spring:message code="patient.dischargeConfirmMessage"/></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="dischargeBtn" type="button" class="btn btn-primary" data-dismiss="modal">Discharge forced</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <script src="<c:url value="/resources/js/jquery.min.js" />"></script>
     <script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
     <script src="<c:url value="/resources/js/holder.min.js" />"></script>
+    <script src="<c:url value="/resources/js/list-treatments.js" />"></script>
 </body>
 </html>

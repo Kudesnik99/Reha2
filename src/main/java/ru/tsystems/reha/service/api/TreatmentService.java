@@ -2,6 +2,7 @@ package ru.tsystems.reha.service.api;
 
 import ru.tsystems.reha.dto.TreatmentDto;
 import ru.tsystems.reha.entity.Patient;
+import ru.tsystems.reha.entity.Treatment;
 import ru.tsystems.reha.service.exception.ServiceException;
 
 import java.util.List;
@@ -21,5 +22,7 @@ public interface TreatmentService {
     List<TreatmentDto> getTreatmentsByPatientId(Long id) throws ServiceException;
 
     void generateEvents(Long id) throws ServiceException;
+
+    public void updatePatientDischargedStatus(Treatment treatment) throws ServiceException;
 
 }

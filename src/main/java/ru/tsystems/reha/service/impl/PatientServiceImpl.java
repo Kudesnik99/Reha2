@@ -5,13 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tsystems.reha.converters.PatientConverter;
+import ru.tsystems.reha.dao.api.EventDao;
 import ru.tsystems.reha.dao.api.PatientDao;
 import ru.tsystems.reha.dao.api.TreatmentDao;
 import ru.tsystems.reha.dao.api.UserDao;
 import ru.tsystems.reha.dao.exception.DaoException;
 import ru.tsystems.reha.dto.PatientDto;
+import ru.tsystems.reha.entity.Event;
 import ru.tsystems.reha.entity.Patient;
 import ru.tsystems.reha.entity.Treatment;
+import ru.tsystems.reha.entity.enums.EventStatus;
 import ru.tsystems.reha.entity.enums.TreatmentStatus;
 import ru.tsystems.reha.service.api.PatientService;
 import ru.tsystems.reha.service.exception.ServiceError;
@@ -32,11 +35,14 @@ public class PatientServiceImpl implements PatientService {
 
     private final TreatmentDao treatmentDao;
 
+    private final EventDao eventDao;
+
     @Autowired
-    public PatientServiceImpl(PatientDao patientDao, UserDao userDao, TreatmentDao treatmentDao) {
+    public PatientServiceImpl(PatientDao patientDao, UserDao userDao, TreatmentDao treatmentDao, EventDao eventDao) {
         this.patientDao = patientDao;
         this.userDao = userDao;
         this.treatmentDao = treatmentDao;
+        this.eventDao = eventDao;
     }
 
     @Override
@@ -108,6 +114,50 @@ public class PatientServiceImpl implements PatientService {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
         }
-
     }
+
+    @Override
+    @Transactional
+    public void dischargePatient(Long id) throws ServiceException {
+        try {
+            Patient patient = patientDao.findById(id);
+            if (patient.getReadyToDischarge()) {
+                patient.setDateFinish(new Date());
+                patient.setDischarged(true);
+                patientDao.update(patient);
+            }
+        } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void dischargePatientForced(Long id) throws ServiceException {
+        try {
+            List<Treatment> treatments = treatmentDao.findByPatientAndThreeStatuses(id,
+                    TreatmentStatus.ASSIGNED, TreatmentStatus.PROCESSING, TreatmentStatus.PLANNED);
+            for (Treatment treatment : treatments) {
+                treatment.setStatus(TreatmentStatus.CANCELED);
+                treatment.setTreatmentResult("Discharged forced");
+                treatmentDao.saveTreatment(treatment);
+                List<Event> events = eventDao.findByTreatmentAndStatus(treatment.getTreatmentId(), EventStatus.PLANNED);
+                for (Event event : events) {
+                    event.setStatus(EventStatus.CANCELED);
+                    event.setReason("Discharged forced");
+                    eventDao.update(event);
+                }
+            }
+            Patient patient = patientDao.findById(id);
+            patient.setDateFinish(new Date());
+            patient.setDischarged(true);
+            patientDao.update(patient);
+        } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
+        }
+    }
+
+
 }

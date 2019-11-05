@@ -23,6 +23,8 @@ public class PatientDto {
 
     private UserDto doctor;
 
+    private Boolean readyToDischarge;
+
     public Long getPatientId() {
         return patientId;
     }
@@ -101,5 +103,13 @@ public class PatientDto {
 
     public void setDoctor(UserDto doctor) {
         this.doctor = doctor;
+    }
+
+    public Boolean getReadyToDischarge() {
+        return readyToDischarge;
+    }
+
+    public void setReadyToDischarge(Boolean readyToDischarge) {
+        this.readyToDischarge = readyToDischarge;
     }
 }

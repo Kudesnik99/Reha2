@@ -19,4 +19,8 @@ public class ErrorPageController {
         theModel.addAttribute("errorMessage", "Error message!");
         return "error-page";
     }
+
+    private int getErrorCode(HttpServletRequest httpRequest) {
+        return (Integer) httpRequest.getAttribute("javax.servlet.error.status_code");
+    }
 }

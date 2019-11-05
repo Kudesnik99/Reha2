@@ -68,6 +68,8 @@ public class TreatmentServiceImpl implements TreatmentService {
             treatment.setTimePattern(pattern);
             treatment.setRemedy(remedy);
             treatmentDao.saveOrUpdate(treatment);
+            updatePatientDischargedStatus(treatment);
+
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
@@ -140,6 +142,30 @@ public class TreatmentServiceImpl implements TreatmentService {
             treatment.setStatus(TreatmentStatus.ASSIGNED);
             treatmentDao.saveTreatment(treatment);
         } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
+        }
+    }
+
+    public void updatePatientDischargedStatus(Treatment treatment) throws ServiceException {
+        long executedCount;
+        long partlyExecutedCount;
+        long allCount;
+
+        try {
+            partlyExecutedCount = treatmentDao.countSomeStatusForPatient(treatment.getPatient().getPatientId(), TreatmentStatus.PARTLY_EXECUTED);
+            executedCount = treatmentDao.countSomeStatusForPatient(treatment.getPatient().getPatientId(), TreatmentStatus.EXECUTED);
+            allCount = treatmentDao.countAllForPatient(treatment.getPatient().getPatientId());
+
+            Patient patient = treatment.getPatient();
+
+            if (allCount == (partlyExecutedCount + executedCount)) patient.setReadyToDischarge(true);
+            else patient.setReadyToDischarge(false);
+            patientDao.update(patient);
+        } catch(
+                DaoException e)
+
+        {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
         }

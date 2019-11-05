@@ -15,6 +15,9 @@ public interface PatientService {
 
     PatientDto getPatient(Long id) throws ServiceException;
 
-    void deletePatient(Long id)  throws ServiceException;
+    void deletePatient(Long id) throws ServiceException;
 
+    void dischargePatient(Long id) throws ServiceException;
+
+    void dischargePatientForced(Long id) throws ServiceException;
 }

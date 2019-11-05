@@ -88,6 +88,26 @@ public class PatientController {
         return "redirect:/patient/list";
     }
 
+    @GetMapping("/discharge")
+    public String dischargePatient(@RequestParam("patientId") Long id) {
+        try {
+            patientService.dischargePatient(id);
+        } catch (ServiceException e) {
+            LOG.warn(e.getError().getMessageForLog(), e);
+        }
+        return "redirect:/patient/list?patientId=0?showConfirm";
+    }
+
+    @GetMapping("/dischargeForced")
+    public String dischargePatientForced(@RequestParam("patientId") Long id) {
+        try {
+            patientService.dischargePatientForced(id);
+        } catch (ServiceException e) {
+            LOG.warn(e.getError().getMessageForLog(), e);
+        }
+        return "redirect:/patient/list?patientId=0?showConfirm";
+    }
+
     @GetMapping("/treatments")
     public String showUserTreatments(@RequestParam("patientId") int theId,
                                     Model theModel) {

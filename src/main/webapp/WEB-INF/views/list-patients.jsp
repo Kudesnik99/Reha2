@@ -12,6 +12,7 @@
 </head>
 <body>
 <jsp:include page="parts/top-bar.jsp"/>
+
 <div class="container-fluid">
     <div class="row">
         <jsp:include page="parts/left-bar.jsp"/>
@@ -48,7 +49,7 @@
                             <c:param name="patientId" value="${tempPatient.patientId}"/>
                         </c:url>
 
-                        <c:url var="deleteLink" value="/patient/delete">
+                        <c:url var="dischargeLink" value="/patient/discharge">
                             <c:param name="patientId" value="${tempPatient.patientId}"/>
                         </c:url>
 
@@ -73,9 +74,16 @@
 
                             <td>
                                 <a href="${updateLink}">Update</a> /
-                                <a href="${deleteLink}"
-                                   onclick="if (!(confirm('<spring:message
-                                           code="patient.confirm"/>'))) return false">Discharge</a> /
+
+                                <c:if test="${tempPatient.readyToDischarge eq true}">
+                                    <a href="${dischargeLink}">Discharge</a> /
+                                </c:if>
+
+                                <c:if test="${tempPatient.readyToDischarge eq false}">
+                                        <a href="#" class="discharge-link"
+                                           discharge-patient-id="${tempPatient.patientId}">Discharge</a> /
+                                </c:if>
+
                                 <a href="${treatmentLink}">Treatments</a>
                             </td>
 
@@ -89,8 +97,29 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Warning!</h4>
+            </div>
+            <div class="modal-body">
+                <p><spring:message code="patient.dischargeConfirmMessage"/></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="editTreatmentBtn" type="button" class="btn btn-primary" data-dismiss="modal">Edit treatments</button>
+                <button id="dischargeBtn" type="button" class="btn btn-primary" data-dismiss="modal">Discharge forced</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="<c:url value="/resources/js/jquery.min.js" />"></script>
 <script src="<c:url value="/resources/js/bootstrap.min.js" />"></script>
 <script src="<c:url value="/resources/js/holder.min.js" />"></script>
+<script src="<c:url value="/resources/js/list-patient.js" />"></script>
 </body>
 </html>

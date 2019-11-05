@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import ru.tsystems.reha.entity.Role;
 
 @Configuration
 @EnableWebSecurity
@@ -69,4 +70,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         authProvider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
         return authProvider;
     }
+
+/*    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests().antMatchers("/account/users/**", "/account/users").hasRole(Role.ADMIN.name())
+                .antMatchers("/account/**", "/account").authenticated().and().formLogin().loginPage("/login")
+                .loginProcessingUrl("/login").defaultSuccessUrl("/").failureForwardUrl("/login?error")
+                .usernameParameter("email").passwordParameter("password").and().csrf().and().logout()
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login?logout");
+    }*/
 }

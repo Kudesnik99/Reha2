@@ -11,5 +11,19 @@ public interface EventDao extends GenericDao<Event, Long> {
 
     Long countSomeStatus(EventStatus status) throws DaoException;
 
+    Long countSomeStatusForTreatment(Long treatmentId, EventStatus status) throws DaoException;
+
     Long countAll() throws DaoException;
+
+    List<Event> findByTreatmentAndStatus(Long treatmentId, EventStatus status) throws DaoException;
+
+    Long countAllForTreatment(Long treatmentId) throws DaoException;
+
+    List<Event> findByTreatmentIdToday(Long id) throws DaoException;
+
+    List<Event> findByTreatmentIdThisHour(Long id) throws DaoException;
+
+    List<Event> findToday() throws DaoException;
+
+    List<Event> findThisHour() throws DaoException;
 }

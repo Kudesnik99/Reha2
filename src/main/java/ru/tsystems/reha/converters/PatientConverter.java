@@ -31,6 +31,7 @@ public class PatientConverter {
         patientDto.setEmail(patient.getEmail());
         patientDto.setDateStart(patient.getDateStart());
         patientDto.setDateFinish(patient.getDateFinish());
+        patientDto.setReadyToDischarge(patient.getReadyToDischarge());
     }
 
     public static void updatePatient(Patient patient, PatientDto patientDto) {
@@ -43,6 +44,7 @@ public class PatientConverter {
         patient.setEmail(patientDto.getEmail());
         patient.setDateStart(patientDto.getDateStart());
         patient.setDateFinish(patientDto.getDateFinish());
+        patient.setReadyToDischarge(patientDto.getReadyToDischarge());
     }
 
 }
