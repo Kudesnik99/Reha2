@@ -20,6 +20,10 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Process requests related with patients.
+ *  * @author Laristov Alexey
+ */
 @Controller
 @RequestMapping("/patient")
 public class PatientController {
@@ -42,6 +46,12 @@ public class PatientController {
         return "list-patients";
     }
 
+    /**
+     * Show form for add patient.
+     * @param model          - data model
+     * @param authentication - current user
+     * @return               - name of form page
+     */
     @GetMapping("/addPatient")
     public String showFormForAdd(Model model, Authentication authentication) {
         Patient patient = new Patient();

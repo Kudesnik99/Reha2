@@ -15,10 +15,12 @@ import ru.tsystems.reha.entity.Treatment;
 import ru.tsystems.reha.entity.enums.EventStatus;
 import ru.tsystems.reha.entity.enums.TreatmentStatus;
 import ru.tsystems.reha.jms.JmsProducer;
+import ru.tsystems.reha.jms.messages.UpdateEventsListMsg;
 import ru.tsystems.reha.service.api.EventService;
 import ru.tsystems.reha.service.api.TreatmentService;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.when;
 
@@ -60,6 +62,27 @@ public class EventServiceTest {
         eventService.saveEvent(eventDto);
         assertEquals(TreatmentStatus.PLANNED, event.getTreatment().getStatus());
 
+    }
+
+    @Before
+    public void setUPDATE_MSG() {
+        UpdateEventsListMsg msg = new UpdateEventsListMsg("remove");
+    }
+
+    @Test
+    public void saveEventDifferentStatusCanceled() throws Exception {
+        EventDto eventDto = createEventDto(EVENT_ID, EventStatus.PLANNED);
+        Event event = createEvent(EVENT_ID, EventStatus.EXECUTED);
+
+        // return instance method
+        when(mockEventDao.findById(eventDto.getEventId())).thenReturn(event);
+        when(mockEventDao.saveOrUpdate(event)).thenReturn(event);
+        // static
+        PowerMockito.doNothing().when(EventConverter.class, "updateEvent", event, eventDto);
+        // void
+        doNothing().when(mockJmsProducer).send(UPDATE_MSG);
+
+        assertNotEquals(TreatmentStatus.PLANNED, event.getStatus());
     }
 
     private EventDto createEventDto(Long id, EventStatus status) {

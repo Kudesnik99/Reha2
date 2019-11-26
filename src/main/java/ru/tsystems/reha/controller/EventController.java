@@ -21,6 +21,10 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Process requests related with events.
+ * @author Laristov Alexey
+ */
 @Controller
 @RequestMapping("/event")
 public class EventController {
@@ -55,6 +59,13 @@ public class EventController {
         return "list-events";
     }
 
+    /**
+     * Get event data from DB and display form for edit
+     * @param id              - editing event id
+     * @param model           - data model
+     * @param authentication  - current user
+     * @return                - page for event edit
+     */
     @GetMapping("/updateForm")
     public String showFormForUpdate(@RequestParam("eventId") Long id, Model model, Authentication authentication) {
         try {
@@ -69,6 +80,11 @@ public class EventController {
         return "event-form";
     }
 
+    /**
+     * Save event data to DB
+     * @param eventDto - data for save
+     * @return         - url for redirect to events list
+     */
     @PostMapping("/saveEvent")
     public String saveEvent(@ModelAttribute("event") EventDto eventDto) {
         Long treatmentId = eventDto.getTreatmentDto().getTreatmentId();
@@ -80,6 +96,10 @@ public class EventController {
         return "redirect:/event/list?treatmentId=" + treatmentId;
     }
 
+    /**
+     * Format date to ss-mm-yyyy view.
+     * @param binder - see {@link WebDataBinder}
+     */
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");

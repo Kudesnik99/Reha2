@@ -97,18 +97,6 @@ public class PatientServiceImpl implements PatientService {
     @Transactional
     public void deletePatient(Long id) throws ServiceException {
         try {
-//            long executedCount = treatmentDao.countSomeStatus(TreatmentStatus.EXECUTED);
-//            long canceledCount = treatmentDao.countSomeStatus(TreatmentStatus.CANCELED);
-//            long plannedCount = treatmentDao.countSomeStatus(TreatmentStatus.PLANNED);
-//            long allCount = treatmentDao.countAll();
-//
-//            Patient patient = patientDao.findById(id);
-//
-//            if (plannedCount == allCount) {
-//                patient.setDateFinish(new Date());
-//                patient.setDischarged(true);
-//            } else if (allCount != (executedCount + canceledCount + plannedCount))
-
             patientDao.remove(patientDao.findById(id));
         } catch (DaoException e) {
             LOG.error(e.getMessage(), e);
