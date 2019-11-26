@@ -59,6 +59,7 @@
                     <p><c:out value="Patient: ${tempEvent.treatmentDto.patientDto.lastName} ${tempEvent.treatmentDto.patientDto.firstName}"/></p>
                 </c:if>
                 <p><c:out value="${tempEvent.treatmentDto.patternDto.timePattern}"/></p>
+                <p><c:out value="${tempEvent.treatmentDto.remedyDto.name} ${tempEvent.treatmentDto.dose} ${tempEvent.treatmentDto.remedyDto.unit}"/></p>
                 <table class="table table-striped table-bordered">
                     <tr>
                         <th><spring:message code="event.date"/></th>
@@ -74,7 +75,12 @@
                             <td>${tempEvent.status.statusName}</td>
                             <td>${tempEvent.reason}</td>
                             <td>
-                                <a href="${updateLink}">Update</a>
+                                <c:if test="${tempEvent.status eq 'PLANNED'}">
+                                    <a href="${updateLink}">Update</a>
+                                </c:if>
+                                <c:if test="${tempEvent.status ne 'PLANNED'}">
+                                    -
+                                </c:if>
                             </td>
                         </tr>
 

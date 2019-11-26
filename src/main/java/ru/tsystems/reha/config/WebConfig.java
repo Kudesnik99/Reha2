@@ -15,7 +15,7 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {
-        "ru.tsystems.reha.controller"
+        "ru.tsystems.reha.controller", "ru.tsystems.reha.rest.controller"
 })
 public class WebConfig implements WebMvcConfigurer {
 

@@ -154,4 +154,23 @@ public class EventDaoImpl extends GenericDaoImpl<Event, Long> implements EventDa
             throw new DaoException(DaoError.PERSIST_EXCEPTION, e);
         }
     }
+
+    @Override
+    public List<Event> findByEventIdsToday(List<Long> ids) throws DaoException {
+        try {
+            Session session = sessionFactory.getCurrentSession();
+            TypedQuery<Event> query = session.createNamedQuery("Event.findByDateTimeAndEventIds", Event.class);
+            query.setParameter("datetimeMin", new Date());
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());
+            cal.add(Calendar.DAY_OF_YEAR, 1);
+            Date dateMax = new Date(cal.getTimeInMillis());
+            query.setParameter("datetimeMax", dateMax);
+            query.setParameter("ids", ids);
+            return query.getResultList();
+        } catch (PersistenceException e) {
+            throw new DaoException(DaoError.PERSIST_EXCEPTION, e);
+        }
+    }
+
 }

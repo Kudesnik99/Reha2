@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import ru.tsystems.reha.converters.EventConverter;
 import ru.tsystems.reha.converters.PatientConverter;
 import ru.tsystems.reha.dao.api.EventDao;
@@ -15,6 +16,10 @@ import ru.tsystems.reha.entity.Event;
 import ru.tsystems.reha.entity.Treatment;
 import ru.tsystems.reha.entity.enums.EventStatus;
 import ru.tsystems.reha.entity.enums.TreatmentStatus;
+import ru.tsystems.reha.jms.JmsProducer;
+import ru.tsystems.reha.jms.messages.UpdateEventsListMsg;
+import ru.tsystems.reha.listeners.CleanupTransactionListener;
+import ru.tsystems.reha.rest.converters.RestEventConverter;
 import ru.tsystems.reha.service.api.EventService;
 import ru.tsystems.reha.service.api.TreatmentService;
 import ru.tsystems.reha.service.exception.ServiceError;
@@ -35,11 +40,18 @@ public class EventServiceImpl implements EventService {
 
     private final TreatmentService treatmentService;
 
+    private final JmsProducer jmsProducer;
+
+    private final String UPDATE_MSG = "Update_event";
+
+    private final String DELETE_MSG = "Delete event";
+
     @Autowired
-    public EventServiceImpl(EventDao eventDao, TreatmentDao treatmentDao, TreatmentService treatmentService) {
+    public EventServiceImpl(EventDao eventDao, TreatmentDao treatmentDao, TreatmentService treatmentService, JmsProducer jmsProducer) {
         this.eventDao = eventDao;
         this.treatmentDao = treatmentDao;
         this.treatmentService = treatmentService;
+        this.jmsProducer = jmsProducer;
     }
 
     @Override
@@ -89,14 +101,23 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public void saveEvent(EventDto eventDto) throws ServiceException {
+        boolean needToUpdateTreatment = false;
+        UpdateEventsListMsg msg;
         try {
-            boolean needToUpdateTreatment = false;
-
             Event event = eventDao.findById(eventDto.getEventId());
             if (event.getStatus() != eventDto.getStatus()) needToUpdateTreatment = true;
             EventConverter.updateEvent(event, eventDto);
+            event.setReason(eventDto.getReason());
             eventDao.saveOrUpdate(event);
-            if (needToUpdateTreatment) updateTreatmentStatus(event.getTreatment());
+            if (needToUpdateTreatment) {
+                if (event.getStatus() == EventStatus.CANCELED)
+                    msg = new UpdateEventsListMsg("remove");
+                else
+                    msg = new UpdateEventsListMsg("update");
+                msg.addId(event.getEventId());
+                registerCleanupTransactionListener(msg);
+                updateTreatmentStatus(event.getTreatment());
+            }
         } catch (DaoException | ParseException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
@@ -128,23 +149,42 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public List<EventDto> getEventsToday() throws ServiceException {
-            try {
-                return eventDao.findToday().stream().map(EventConverter::toEventDto).collect(Collectors.toList());
-            } catch (DaoException e) {
-                LOG.error(e.getMessage(), e);
-                throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
-            }
+        try {
+            return eventDao.findToday().stream().map(EventConverter::toEventDto).collect(Collectors.toList());
+        } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
+        }
     }
 
     @Override
     @Transactional
     public List<EventDto> getEventsThisHour() throws ServiceException {
-                try {
-                    return eventDao.findThisHour().stream().map(EventConverter::toEventDto).collect(Collectors.toList());
-                } catch (DaoException e) {
-                    LOG.error(e.getMessage(), e);
-                    throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
-                }
+        try {
+            return eventDao.findThisHour().stream().map(EventConverter::toEventDto).collect(Collectors.toList());
+        } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public ru.tsystems.reha.rest.model.Events getAllEventsForPanel() throws ServiceException {
+        List<EventDto> eventsDto = getEventsToday();
+        return RestEventConverter.prepareRestEvents(eventsDto);
+    }
+
+    @Override
+    @Transactional
+    public ru.tsystems.reha.rest.model.Events getSomeEventsForPanel(List<Long> ids) throws ServiceException {
+        try {
+            List<EventDto> eventsDto = eventDao.findByEventIdsToday(ids).stream().map(EventConverter::toEventDto).collect(Collectors.toList());
+            return RestEventConverter.prepareRestEvents(eventsDto);
+        } catch (DaoException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
+        }
     }
 
     private void updateTreatmentStatus(Treatment treatment) throws ServiceException {
@@ -163,12 +203,17 @@ public class EventServiceImpl implements EventService {
                 } else treatment.setStatus(TreatmentStatus.PROCESSING);
             }
             treatmentDao.saveTreatment(treatment);
-            treatmentService.updatePatientDischargedStatus(treatment);
+            treatmentService.updatePatientDischargedStatus(treatment.getPatient());
         } catch (
                 DaoException e) {
             LOG.error(e.getMessage(), e);
             throw new ServiceException(ServiceError.PERSIST_EXCEPTION, e);
         }
+    }
+
+    private void registerCleanupTransactionListener(UpdateEventsListMsg msg) {
+        CleanupTransactionListener transactionListener = new CleanupTransactionListener(jmsProducer, msg);
+        TransactionSynchronizationManager.registerSynchronization(transactionListener);
     }
 
 }

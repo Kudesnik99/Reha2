@@ -29,7 +29,7 @@
             <h1 class="page-header"><spring:message code="treatment.h1Title"/></h1>
             <h2 class="sub-header">
                 <spring:message code="treatment.list_form_title"/>:
-                <c:if test="${patientId gt 0}">${patient.lastName}</c:if>
+                <c:if test="${patientId gt 0}">${patient.lastName} ${patient.firstName}</c:if>
                 <c:if test="${patientId eq 0}">All patients</c:if>
             </h2>
 

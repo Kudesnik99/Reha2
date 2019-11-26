@@ -25,7 +25,7 @@
                             <div class="panel-title"><spring:message code="event.form_title"/></div>
                         </div>
                         <div class="panel-body">
-                            <form:form action="updateEvent" cssClass="form-horizontal"
+                            <form:form action="saveEvent" cssClass="form-horizontal"
                                        method="post" modelAttribute="eventDto">
 
                                 <form:hidden path="eventId"/>

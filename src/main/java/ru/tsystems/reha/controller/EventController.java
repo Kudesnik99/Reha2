@@ -11,19 +11,20 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import ru.tsystems.reha.dto.EventDto;
 import ru.tsystems.reha.dto.PatientDto;
-import ru.tsystems.reha.dto.PatternDto;
 import ru.tsystems.reha.dto.UserDto;
 import ru.tsystems.reha.entity.enums.EventStatus;
 import ru.tsystems.reha.service.api.EventService;
 import ru.tsystems.reha.service.exception.ServiceException;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 @Controller
 @RequestMapping("/event")
 public class EventController {
+    private static final String USER_DTO_ATTR = "userDto";
 
     private static final Logger LOG = Logger.getLogger(EventController.class);
 
@@ -55,19 +56,21 @@ public class EventController {
     }
 
     @GetMapping("/updateForm")
-    public String showFormForUpdate(@RequestParam("eventId") Long id, Model model) {
+    public String showFormForUpdate(@RequestParam("eventId") Long id, Model model, Authentication authentication) {
         try {
             EventDto event = eventService.getEvent(id);
             model.addAttribute("eventDto", event);
-            model.addAttribute("statuses", EventStatus.values());
+            model.addAttribute("statuses", Arrays.asList(EventStatus.EXECUTED, EventStatus.CANCELED));
+            UserDto userDto = (UserDto) authentication.getPrincipal();
+            model.addAttribute(USER_DTO_ATTR, userDto);
         } catch (ServiceException e) {
             LOG.warn(e.getError().getMessageForLog(), e);
         }
         return "event-form";
     }
 
-    @PostMapping("/updateEvent")
-    public String updateEvent(@ModelAttribute("event") EventDto eventDto) {
+    @PostMapping("/saveEvent")
+    public String saveEvent(@ModelAttribute("event") EventDto eventDto) {
         Long treatmentId = eventDto.getTreatmentDto().getTreatmentId();
         try {
             eventService.saveEvent(eventDto);

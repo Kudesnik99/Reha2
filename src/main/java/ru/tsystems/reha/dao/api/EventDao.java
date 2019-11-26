@@ -26,4 +26,6 @@ public interface EventDao extends GenericDao<Event, Long> {
     List<Event> findToday() throws DaoException;
 
     List<Event> findThisHour() throws DaoException;
+
+    List<Event> findByEventIdsToday(List<Long> ids) throws DaoException;;
 }

@@ -37,7 +37,7 @@
                                 <div class="form-group">
                                     <label class="col-md-3 control-label">Doctor:</label>
                                     <div class="col-md-9">
-                                        <label class="col-md-3 control-label">${fn:trim(userDto.lastName)}</label>
+                                        <label class="col-md-3 control-label">${fn:trim(userDto.lastName)} ${fn:trim(userDto.firstName)}</label>
                                     </div>
                                 </div>
 

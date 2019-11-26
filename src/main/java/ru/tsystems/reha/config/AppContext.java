@@ -1,13 +1,16 @@
 package ru.tsystems.reha.config;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.log4j.BasicConfigurator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -17,9 +20,19 @@ import java.util.Properties;
 
 @Configuration
 @PropertySource("classpath:database.properties")
+@PropertySource("classpath:jms.properties")
 @EnableTransactionManagement
 @ComponentScan(basePackages = { "ru.tsystems.reha" })
 public class AppContext {
+
+    @Value("${spring.activemq.broker-url}")
+    String BROKER_URL; // = "tcp://localhost:61616";
+
+    @Value("${spring.activemq.user}")
+    String BROKER_USERNAME; // = "alex";
+
+    @Value("${spring.activemq.password}")
+    String BROKER_PASSWORD; // = "memento";
 
     public AppContext() {
         // Set up Log4j simple configuration that logs on the console.

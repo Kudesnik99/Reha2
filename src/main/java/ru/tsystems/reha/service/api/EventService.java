@@ -2,6 +2,7 @@ package ru.tsystems.reha.service.api;
 
 import ru.tsystems.reha.dto.EventDto;
 import ru.tsystems.reha.dto.PatientDto;
+import ru.tsystems.reha.rest.model.Events;
 import ru.tsystems.reha.service.exception.ServiceException;
 
 import java.util.List;
@@ -25,4 +26,8 @@ public interface EventService {
     List<EventDto> getEventsToday() throws ServiceException;
 
     List<EventDto> getEventsThisHour() throws ServiceException;
+
+    Events getAllEventsForPanel() throws ServiceException;
+
+    Events getSomeEventsForPanel(List<Long> ids) throws ServiceException;
 }

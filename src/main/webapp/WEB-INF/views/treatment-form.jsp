@@ -91,6 +91,7 @@
                                                     data-provide="datepicker"/>
                                     </div>
                                 </div>
+                                </c:if>
 
                                 <div class="form-group">
                                     <label for="dose" class="col-md-3 control-label"><spring:message

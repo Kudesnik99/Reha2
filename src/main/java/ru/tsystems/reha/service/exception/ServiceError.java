@@ -6,7 +6,8 @@ public enum ServiceError {
     DUPLICATE_EVENT(3, "This event has already exist.", "event already exist"),
     DUPLICATE_USER(4, "Sorry, a user with the same email address already exists", "user with the same email address already exists"),
     TREATMENT_NOT_EXIST(5, "The treatment does not exist.", "the treatment does not exist"),
-    EVENT_NOT_EXIST(6, "The event does not exist.", "the event does not exist");
+    EVENT_NOT_EXIST(6, "The event does not exist.", "the event does not exist"),
+    JMS_CONNECTION_ERROR(6, "Could not connect to JMS-broker.", "Could not connect to broker URL: ${jms.queue.destination}");
 
     private final int id;
     private final String message;
