@@ -1,69 +1,116 @@
 package ru.tsystems.reha.dto;
 
-import ru.tsystems.reha.entity.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import ru.tsystems.reha.entity.enums.TreatmentStatus;
+import ru.tsystems.reha.util.DataRange;
+import ru.tsystems.reha.util.FromToday;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+@DataRange
 public class TreatmentDto {
 
-    private int treatmentId;
-    private String description;
-    private String period_start;
-    private String period_end;
-    private int dose;
-    private TreatmentStatus status;
-    private String treatmentResult;
-    private Patient patient;
-    private Remedy remedy;
-    private Pattern timePattern;
+    private Long treatmentId;
 
-    public TreatmentDto(Treatment treatment) {
-        this.treatmentId = treatment.getTreatmentId();
-        this.description = treatment.getDescription();
-        this.period_start = dateTimeFormat(treatment.getPeriod_start());
-        this.period_end = dateTimeFormat(treatment.getPeriod_end());
-        this.dose = treatment.getDose();
-        this.status = treatment.getStatus();
-        this.treatmentResult = treatment.getTreatmentResult();
-        this.patient = treatment.getPatient();
-        this.remedy = treatment.getRemedy();
-        this.timePattern = treatment.getTimePattern();
+    private String description;
+
+    @FromToday
+    @DateTimeFormat(pattern="dd.MM.yyyy")
+    @NotNull
+    private Date periodStart;
+
+    @FutureOrPresent
+    @DateTimeFormat(pattern="dd.MM.yyyy")
+    @NotNull
+    private Date periodEnd;
+
+    private Integer dose;
+
+    private TreatmentStatus status = TreatmentStatus.PLANNED;
+
+    private String treatmentResult;
+
+    private PatientDto patientDto;
+
+    private RemedyDto remedyDto;
+
+    private PatternDto patternDto;
+
+    public Long getTreatmentId() {
+        return treatmentId;
     }
 
-    public int getTreatmentId() { return treatmentId; }
-    public void setTreatmentId(int treatmentId) { this.treatmentId = treatmentId; }
+    public void setTreatmentId(Long treatmentId) {
+        this.treatmentId = treatmentId;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public String getDescription() {
+        return description;
+    }
 
-    public String getPeriod_start() { return period_start; }
-    public void setPeriod_start(String period_start) { this.period_start = period_start; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public String getPeriod_end() { return period_end; }
-    public void setPeriod_end(String period_end) { this.period_end = period_end; }
+    public Date getPeriodStart() {
+        return periodStart;
+    }
 
-    public int getDose() { return dose; }
-    public void setDose(int dose) { this.dose = dose; }
+    public void setPeriodStart(Date periodStart) {
+        this.periodStart = periodStart;
+    }
 
-    public TreatmentStatus getStatus() { return status; }
-    public void setStatus(TreatmentStatus status) { this.status = status; }
+    public Date getPeriodEnd() {
+        return periodEnd;
+    }
 
-    public String getTreatmentResult() { return treatmentResult; }
-    public void setTreatmentResult(String treatmentResult) { this.treatmentResult = treatmentResult; }
+    public void setPeriodEnd(Date periodEnd) {
+        this.periodEnd = periodEnd;
+    }
 
-    public Patient getPatient() { return patient; }
-    public void setPatient(Patient patient) { this.patient = patient; }
+    public Integer getDose() {
+        return dose;
+    }
 
-    public Remedy getRemedy() { return remedy; }
-    public void setRemedy(Remedy remedy) { this.remedy = remedy; }
+    public void setDose(Integer dose) {
+        this.dose = dose;
+    }
 
-    public Pattern getTimePattern() { return timePattern; }
-    public void setTimePattern(Pattern timePattern) { this.timePattern = timePattern; }
+    public TreatmentStatus getStatus() {
+        return status;
+    }
 
-    public String dateTimeFormat(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        return dateFormat.format(date);
+    public void setStatus(TreatmentStatus status) {
+        this.status = status;
+    }
+
+    public String getTreatmentResult() {
+        return treatmentResult;
+    }
+
+    public void setTreatmentResult(String treatmentResult) {
+        this.treatmentResult = treatmentResult;
+    }
+
+    public PatientDto getPatientDto() { return patientDto; }
+
+    public void setPatientDto(PatientDto patientDto) { this.patientDto = patientDto; }
+
+    public RemedyDto getRemedyDto() {
+        return remedyDto;
+    }
+
+    public void setRemedyDto(RemedyDto remedyDto) {
+        this.remedyDto = remedyDto;
+    }
+
+    public PatternDto getPatternDto() {
+        return patternDto;
+    }
+
+    public void setPatternDto(PatternDto patternDto) {
+        this.patternDto = patternDto;
     }
 }

@@ -8,28 +8,29 @@ import ru.tsystems.reha.entity.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class UserDto implements UserDetails {
 
-    private final String password;
+    private Long userId;
 
-    private final List<GrantedAuthority> authorities;
+    private String password;
 
-    private final boolean accountNonExpired;
+    private List<GrantedAuthority> authorities;
 
-    private final boolean accountNonLocked;
+    private boolean accountNonExpired;
 
-    private final boolean credentialsNonExpired;
+    private boolean accountNonLocked;
 
-    private final boolean enabled;
+    private boolean credentialsNonExpired;
 
-    private final Role role;
+    private boolean enabled;
 
+    private Role role;
+
+    @Email
     private String email;
 
     private String firstName;
@@ -38,6 +39,10 @@ public class UserDto implements UserDetails {
     private String lastName;
 
     private String avatar;
+
+    public UserDto(){
+
+    }
 
     public UserDto(User user) {
         this.password = user.getPassword();
@@ -51,6 +56,7 @@ public class UserDto implements UserDetails {
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.avatar = user.getAvatar();
+        this.userId = user.getUserId();
     }
 
     @Override
@@ -122,6 +128,14 @@ public class UserDto implements UserDetails {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
 
